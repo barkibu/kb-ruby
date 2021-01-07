@@ -13,6 +13,10 @@ module KB
         call :petfamily, :pets
       end
 
+      def breed
+        call '', :breeds
+      end
+
       def call(*args, &block)
         new(*args, &block).call
       end
