@@ -1,8 +1,6 @@
 require 'spec_helper'
 
 RSpec.describe KB::Client do
-  subject(:client) { described_class.new(base_url, api_key: api_key) }
-
   let(:path) { '/v4/resource' }
   let(:api_host) { 'http://myapi.com' }
   let(:base_url) { api_host + path }
@@ -13,27 +11,28 @@ RSpec.describe KB::Client do
     Faraday::Adapter::Test::Stubs.new
   end
 
+  subject(:client) { described_class.new(base_url, api_key: api_key) }
+
   before(:all) do
     I18n.available_locales = %i[en es]
     I18n.default_locale = :en
   end
 
-  before do
+  before(:each) do
     connection = client.send('connection')
     connection.builder.adapter :test, stubs
   end
 
-  after do
+  after(:each) do
     Faraday.default_connection = nil
   end
 
   describe '#all' do
-    subject(:all) { client.all(filters) }
-
     let(:api_response) { [200, { 'Content-Type': 'application/json' }, resources.to_json] }
     let(:api_error) { [422, {}, 'Something went wrong'] }
     let(:filters) { { foo: 'bar' } }
     let(:resources) { [{ my: 'first_resource' }, { my: 'second_resource' }] }
+    subject(:all) { client.all(filters) }
 
     it_behaves_like 'Localizable Request' do
       let(:resource_path) { path }
@@ -77,13 +76,13 @@ RSpec.describe KB::Client do
   end
 
   describe '#find' do
-    subject(:find) { client.find(key) }
-
     let(:api_response) { [200, { 'Content-Type': 'application/json' }, resource.to_json] }
     let(:api_error) { [404, {}, 'Not Found'] }
     let(:key) { 'identifying_key' }
     let(:resource) { { key: key, foo: 'bar' } }
     let(:resource_path) { "#{path}/#{key}" }
+
+    subject(:find) { client.find(key) }
 
     it_behaves_like 'Localizable Request'
 
@@ -117,12 +116,12 @@ RSpec.describe KB::Client do
   end
 
   describe '#create' do
-    subject(:create) { client.create(attributes) }
-
     let(:api_response) { [201, { 'Content-Type': 'application/json' }, created_entity.to_json] }
     let(:api_error) { [422, {}, 'Invalid something'] }
     let(:attributes) { { attribute_a: 'value 1', foo: 'bar' } }
     let(:created_entity) { attributes.merge(key: 'key') }
+
+    subject(:create) { client.create(attributes) }
 
     it_behaves_like 'Localizable Request', :post do
       let(:resource_path) { path }

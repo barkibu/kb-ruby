@@ -8,4 +8,3 @@ require 'kb/models/assessment'
 require 'kb/models/pet_parent'
 
 require 'kb/models/pet'
-require 'kb/models/breed'

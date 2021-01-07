@@ -15,7 +15,9 @@ module KB
       end
 
       def kb_client
-        raise KBClientNotSetException, "You probably forgot to call `kb_api ...` on the class #{name}" if resolver_factory.blank?
+        if resolver_factory.blank?
+          raise KBClientNotSetException, "You probably forgot to call `kb_api ...` on the class #{name}"
+        end
 
         @kb_client ||= ClientResolver.public_send(resolver_factory)
       end

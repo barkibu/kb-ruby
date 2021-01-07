@@ -28,7 +28,7 @@ This gem wraps the Knowledge Base Api and exposes CRUD-_able_ entities into the 
 The configuration of the connection to the Knowledge Base is done using ENV variable:
 - **KB_API_KEY**: the Knowledge Base API Key
 - **KB_PARTNER_KEY**: the Partner KB Key
-- **KB_API_URL_TEMPLATE**: the template url of the Knowledge Base where will be extrapolated _bounded_context_, _version_ and _entity_.
+- **KB_API_URL_TEMPLATE**: the template url of the Knowledge Base where will be extrapolated _bounded_context_, _version_ and _entity_. 
 
     For instance: `https://dev.api.%{bounded_context}.barkkb.com/%{version}/%{entity}`.
 
@@ -40,8 +40,8 @@ The configuration of the connection to the Knowledge Base is done using ENV vari
 `KB::PetParent` acts almost like an `ActiveRecord` implementing `ActiveModel::Model` exposing:
 - `find`
     - arg: `key` string
-    - returns: a PetParent instance when provided an existing key or raise `ActiveRecord::RecordNotFound`
-- `all`
+    - returns: a PetParent instance when provided an existing key or raise `ActiveRecord::RecordNotFound` 
+- `all` 
     - arg: `filters` hash of filters
     - returns: an array of PetParent instances matching the filters
 - `save!`
@@ -52,7 +52,7 @@ The configuration of the connection to the Knowledge Base is done using ENV vari
 `KB::Assessment` represents a read-only resource exposing:
 - `find`
     - arg: `key` string
-    - returns: an Assessment instance when provided an existing key or raise `ActiveRecord::RecordNotFound`
+    - returns: an Assessment instance when provided an existing key or raise `ActiveRecord::RecordNotFound` 
 - `all`
     - arg: `filters` hash of filters
     - returns: an array of Assessment instances matching the filters
@@ -68,26 +68,9 @@ The configuration of the connection to the Knowledge Base is done using ENV vari
 #### Pet 🐶🐱
 
 `KB::Pet` represents a resource exposing:
-- `all`
+- `all` 
     - arg: `filters` hash of filters
     - returns: an array of Pet instances matching the filters
-
-#### Breed
-
-```
-> KB Breed endpoint requires `locale` as param. By default is set to 'es-es' but can be override setting **KB_BREEDS_DEFAULT_LOCALE** ENV var
-```
-
-`KB::Breed` represents a resource exposing:
-- `all`
-    - arg: `filters` hash of filters
-    - returns: and array of Breed instances matching the filters
-- `dogs` (alias for all(species: 'dog'))
-    - arg: `filters` hash of filters
-    - returns: and array of Dog Breed instances matching the filters
-- `cats` (alias for all(species: 'cat'))
-    - arg: `filters` hash of filters
-    - returns: and array of Cat Breed instances matching the filters
 
 ## Development & Testing
 

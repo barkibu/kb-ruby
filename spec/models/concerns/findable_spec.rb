@@ -3,10 +3,10 @@ require 'spec_helper'
 RSpec.describe KB::Findable do
   include_context 'KB Models Queryable Concerns'
 
-  subject(:find) { including_class.find(key) }
-
   let(:including_class) { including_class_factory(client: :consultation) }
   let(:found_entity) { { key: key, foo: 'bar', some_field: 'a field we just ignore' } }
+
+  subject(:find) { including_class.find(key) }
 
   it 'calls `find` on the configured client' do
     expect(kb_client).to receive(:find).with(key).and_return(found_entity)
@@ -29,7 +29,7 @@ RSpec.describe KB::Findable do
     end
 
     it 'returns an instance of the including class' do
-      expect(find.instance_of?(including_class)).to be(true)
+      expect(find).to be_an_instance_of(including_class)
     end
   end
 

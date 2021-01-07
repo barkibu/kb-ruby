@@ -1,3 +1,5 @@
+require 'byebug'
+
 module KB
   class Client
     attr_reader :api_key, :base_url

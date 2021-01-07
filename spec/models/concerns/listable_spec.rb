@@ -3,11 +3,11 @@ require 'spec_helper'
 RSpec.describe KB::Listable do
   include_context 'KB Models Queryable Concerns'
 
-  subject(:all) { including_class.all(filters) }
-
   let(:including_class) { including_class_factory(client: :pet_parent) }
   let(:filters) { { foo: 'bar' } }
   let(:found_entities) { [{ key: 'key1', foo: 'bar', some_field: 'a field we just ignore' }] }
+
+  subject(:all) { including_class.all(filters) }
 
   it 'calls `all` on the configured kb_client' do
     expect(kb_client).to receive(:all).with(filters).and_return(found_entities)
@@ -35,7 +35,7 @@ RSpec.describe KB::Listable do
 
     it 'returns an instance of the including class' do
       all.each do |entity|
-        expect(entity.instance_of?(including_class)).to be(true)
+        expect(entity).to be_an_instance_of(including_class)
       end
     end
   end

@@ -11,8 +11,6 @@ module KB
         kb_client.all(filters).map do |pet_parent|
           new attributes_from_response(pet_parent), &:persist!
         end
-      rescue Faraday::ConnectionFailed => e
-        raise e
       rescue Faraday::Error => e
         KB::Error.new(e.response[:status], e.response[:body])
       end
