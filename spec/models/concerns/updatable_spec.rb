@@ -3,10 +3,10 @@ require 'spec_helper'
 RSpec.describe KB::Updatable do
   include_context 'KB Models Queryable Concerns'
 
+  subject(:update) { including_class.update(key, attributes) }
+
   let(:including_class) { including_class_factory(client: :pet_parent) }
   let(:updated_entity) { { key: key, foo: 'bar', some_field: 'a field we just ignore' } }
-
-  subject(:update) { including_class.update(key, attributes) }
 
   it 'calls `update` on the configured kb_client' do
     expect(kb_client).to receive(:update).with(key, attributes).and_return(updated_entity)

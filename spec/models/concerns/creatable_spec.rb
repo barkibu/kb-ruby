@@ -3,10 +3,10 @@ require 'spec_helper'
 RSpec.describe KB::Creatable do
   include_context 'KB Models Queryable Concerns'
 
+  subject(:create) { including_class.create(attributes) }
+
   let(:including_class) { including_class_factory(client: :pet_parent) }
   let(:created_entity) { { key: key, foo: 'bar', some_field: 'some other field we just ignore' } }
-
-  subject(:create) { including_class.create(attributes) }
 
   it 'calls `create` on the configured kb_client' do
     expect(kb_client).to receive(:create).with(attributes).and_return(created_entity)

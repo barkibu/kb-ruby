@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.email         = ['leo@barkibu.com']
 
   spec.summary       = "Barkibu's Knowledge Base API sdk"
-  spec.description   = "A wrapper of Barkibu's Knowledge Base Endpoint to make those entities and their respective CRUD operations available to a ruby app" # rubocop:disable Layout/LineLength
+  spec.description   = "A wrapper of Barkibu's Knowledge Base Endpoint to make those entities and their respective CRUD operations available to a ruby app"
   spec.homepage      = 'https://app.barkibu.com'
   spec.license       = 'MIT'
 

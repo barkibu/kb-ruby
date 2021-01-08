@@ -3,6 +3,8 @@ require 'spec_helper'
 RSpec.describe KB::Queryable do
   include_context 'KB Models Queryable Concerns'
 
+  subject(:exposed_kb_client) { including_class.exposed_client }
+
   let(:invalid_class) do
     including_class_factory do |class_self|
       class_self.define_singleton_method(:exposed_client) do
@@ -10,6 +12,7 @@ RSpec.describe KB::Queryable do
       end
     end
   end
+  let(:including_class) { valid_class }
 
   let(:valid_class) do
     including_class_factory(client: :pet_parent) do |class_self|
@@ -18,10 +21,6 @@ RSpec.describe KB::Queryable do
       end
     end
   end
-
-  subject(:exposed_kb_client) { including_class.exposed_client }
-
-  let(:including_class) { valid_class }
 
   it 'exposes `kb_api` privately to configure the client on the including class' do
     expect(including_class.private_methods).to include(:kb_api)
