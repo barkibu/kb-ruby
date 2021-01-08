@@ -9,7 +9,7 @@ module KB
     module ClassMethods
       def all(filters = {})
         kb_client.all(filters).map do |pet_parent|
-          new attributes_from_response(pet_parent), &:persist!
+          from_api pet_parent
         end
       rescue Faraday::ConnectionFailed => e
         raise e

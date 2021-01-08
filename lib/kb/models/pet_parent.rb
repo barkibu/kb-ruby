@@ -35,6 +35,8 @@ module KB
     end
 
     def save!
+      return unless changed?
+
       run_callbacks :save do
         self.attributes = if @persisted
                             self.class.update key, changes.transform_values(&:last)
@@ -48,6 +50,12 @@ module KB
 
     def full_phone_number
       "#{phone_number_prefix}#{phone_number}"
+    end
+
+    def pets
+      self.class.kb_client.request("#{key}/pets").map do |pet|
+        Pet.from_api(pet)
+      end
     end
   end
 end

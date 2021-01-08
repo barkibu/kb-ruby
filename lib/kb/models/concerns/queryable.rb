@@ -8,18 +8,22 @@ module KB
     end
 
     module ClassMethods
-      private
-
-      def kb_api(resolver_factory)
-        self.resolver_factory = resolver_factory
-      end
-
       def kb_client
         if resolver_factory.blank?
           raise KBClientNotSetException, "You probably forgot to call `kb_api ...` on the class #{name}"
         end
 
         @kb_client ||= ClientResolver.public_send(resolver_factory)
+      end
+
+      def from_api(attributes)
+        new attributes_from_response(attributes), &:persist!
+      end
+
+      private
+
+      def kb_api(resolver_factory)
+        self.resolver_factory = resolver_factory
       end
 
       # @abstract Subclass is expected to implement #attributes_from_response

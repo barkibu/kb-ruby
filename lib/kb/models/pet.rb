@@ -1,6 +1,9 @@
 module KB
   class Pet < BaseModel
     include Listable
+    include Findable
+    include Creatable
+    include Updatable
 
     kb_api :pet
 
@@ -10,7 +13,7 @@ module KB
 
     private_class_method :attributes_from_response
 
-    STRING_FIELDS = %i[key name sex breed chip species].freeze
+    STRING_FIELDS = %i[key pet_parent_key name age_category sex breed chip species].freeze
     BOOLEAN_FIELDS = %i[neutered mongrel].freeze
     FIELDS = [*STRING_FIELDS, *BOOLEAN_FIELDS, :birth_date].freeze
 
@@ -34,6 +37,8 @@ module KB
     end
 
     def save!
+      return unless changed?
+
       run_callbacks :save do
         self.attributes = if @persisted
                             self.class.update key, changes.transform_values(&:last)

@@ -9,6 +9,10 @@ module KB
       @base_url = base_url
     end
 
+    def request(sub_path, filters: {}, method: :get)
+      connection.public_send(method, sub_path, filters).body
+    end
+
     def all(filters = {})
       connection.get('', filters).body
     end
