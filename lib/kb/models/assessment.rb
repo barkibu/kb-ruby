@@ -9,7 +9,7 @@ module KB
 
     class << self
       def by_pet(pet)
-        all(user: pet.aivet_uuid)
+        all(user: pet.kb_key)
       end
 
       private
