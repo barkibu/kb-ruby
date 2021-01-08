@@ -14,7 +14,7 @@ module KB
     end
 
     def all(filters = {})
-      connection.get('', filters).body
+      connection.get('', attributes_case_transform(filters)).body
     end
 
     def find(key)
@@ -40,10 +40,14 @@ module KB
       }
     end
 
-    def attributes_to_json(attributes)
+    def attributes_case_transform(attributes)
       attributes.transform_keys do |key|
         key.to_s.camelize(:lower)
-      end.to_json
+      end
+    end
+
+    def attributes_to_json(attributes)
+      attributes_case_transform(attributes).to_json
     end
 
     def connection

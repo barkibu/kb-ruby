@@ -7,6 +7,16 @@ module KB
 
     kb_api :pet_parent
 
+    def self.all(filters = {})
+      filters[:partner_key] = ENV['KB_PARTNER_KEY']
+      super(filters)
+    end
+
+    def self.create(attributes = {})
+      attributes[:partner_key] = ENV['KB_PARTNER_KEY']
+      super(attributes)
+    end
+
     def self.attributes_from_response(response)
       response.transform_keys(&:underscore).transform_keys(&:to_sym).slice(*FIELDS)
     end
