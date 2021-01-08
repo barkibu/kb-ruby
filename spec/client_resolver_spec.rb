@@ -23,6 +23,7 @@ RSpec.describe KB::ClientResolver do
     consultation
     pet_parent
     pet
+    breed
   ].each do |resource|
     it "responds to #{resource}" do
       expect(described_class).to respond_to resource

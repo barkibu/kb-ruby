@@ -57,17 +57,5 @@ module KB
         super(value)
       end
     end
-
-    def save!
-      run_callbacks :save do
-        self.attributes = if @persisted
-                            self.class.update key, changes.transform_values(&:last)
-                          else
-                            self.class.create changes.transform_values(&:last)
-                          end
-
-        self
-      end
-    end
   end
 end

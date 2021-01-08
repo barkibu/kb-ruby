@@ -74,6 +74,24 @@ The configuration of the connection to the Knowledge Base is done using ENV vari
   - arg: `filters` hash of filters
   - returns: an array of Pet instances matching the filters
 
+#### Breed
+
+```
+> KB Breed endpoint requires `locale` as param. By default is set to 'es-es' but can be override setting **KB_BREEDS_DEFAULT_LOCALE** ENV var
+```
+
+`KB::Breed` represents a resource exposing:
+
+- `all`
+  - arg: `filters` hash of filters
+  - returns: and array of Breed instances matching the filters
+- `dogs` (alias for all(species: 'dog'))
+  - arg: `filters` hash of filters
+  - returns: and array of Dog Breed instances matching the filters
+- `cats` (alias for all(species: 'cat'))
+  - arg: `filters` hash of filters
+  - returns: and array of Cat Breed instances matching the filters
+
 ## Development & Testing
 
 ```bash
