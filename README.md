@@ -92,6 +92,35 @@ The configuration of the connection to the Knowledge Base is done using ENV vari
   - arg: `filters` hash of filters
   - returns: and array of Cat Breed instances matching the filters
 
+### Mock the API calls in test environment
+
+In order to use the FakeApi intercepting calls to the API, make sure `sinatra` is added to the dev dependency of your project. In the spec_helper (or rails_helper if in a rail app), add the following:
+
+```ruby
+    require 'sinatra'
+
+    # ...
+
+    RSpec.configure do |config|
+        # ...
+        config.before(:all) do
+            stub_request(:any, /test_api_barkkb.com/).to_rack(KB::Tests::FakeApi)
+        end
+
+        config.around(:each) do |example|
+            snapshot = KB::Tests::FakeApi.snapshot()
+            stub_request(:any, /test_api_barkkb.com/).to_rack(KB::Tests::FakeApi)
+            example.run
+            KB::Tests::FakeApi.restore snapshot
+        end
+        # ...
+    end
+```
+
+Make sure to set the `KB_API_URL_TEMPLATE` to something that will match above the request interceptor, for instance: `https://test.api.%{bounded_context}.test_api_barkkb.com/%{version}/%{entity}`
+
+You should be able to use the API seemlessly and the calls to the API will be intercepted and a local one used instead in a similar fashion to how ActiveRecord operations are wrapped into a transaction in a rails app with `use_transactional_fixtures` activated.
+
 ## Development & Testing
 
 ```bash
