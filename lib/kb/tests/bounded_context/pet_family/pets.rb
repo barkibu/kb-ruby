@@ -1,5 +1,4 @@
 require 'kb/tests/bounded_context/rest_resource'
-require 'byebug'
 require 'date'
 
 module BoundedContext
@@ -22,7 +21,7 @@ module BoundedContext
         end
 
         def on_update_action(name, _version)
-          resource_to_update = resource_state(name).detect { |resource| resource['key'] == params['key'] }
+          resource_to_update = find_resource name, params['key']
 
           return json_response 404, {} if resource_to_update.nil?
 
@@ -30,9 +29,8 @@ module BoundedContext
           partial_resource['ageCategory'] = stage(partial_resource['birthDate'], resource_to_update['species'])
           updated_resource = resource_to_update.merge partial_resource
 
-          set_resource_state(name, resource_state(name).map do |resource|
-            resource['key'] == params['key'] ? updated_resource : resource
-          end)
+          update_resource_state(name, updated_resource)
+
           json_response 200, updated_resource
         end
       end

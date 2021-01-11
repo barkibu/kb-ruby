@@ -2,9 +2,10 @@ module BoundedContext
   module RestResource
     extend ActiveSupport::Concern
 
+    # rubocop:disable Metrics/BlockLength
     included do
       def resource_by_key(resource, key)
-        entity = resource_state(resource).detect { |item| item['key'] == key }
+        entity = find_resource(resource, key)
         return json_response 404, {} if entity.nil?
 
         json_response 200, entity
@@ -42,19 +43,33 @@ module BoundedContext
       end
 
       def on_update_action(name, _version)
-        resource_to_update = resource_state(name).detect { |resource| resource['key'] == params['key'] }
+        resource_to_update = find_resource name, params['key']
 
         return json_response 404, {} if resource_to_update.nil?
 
         partial_resource = JSON.parse(request.body.read)
         updated_resource = resource_to_update.merge partial_resource
 
-        set_resource_state(name, resource_state(name).map do |resource|
-          resource['key'] == params['key'] ? updated_resource : resource
-        end)
+        update_resource_state(name, updated_resource)
+
         json_response 200, updated_resource
       end
+
+      private
+
+      def find_resource(name, key)
+        resource_state(name).detect { |resource| resource['key'] == key }
+      end
+
+      def update_resource_state(name, updated_resource)
+        updated_resources = resource_state(name).map do |resource|
+          resource['key'] == updated_resource['key'] ? updated_resource : resource
+        end
+
+        set_resource_state(name, updated_resources)
+      end
     end
+    # rubocop:enable Metrics/BlockLength
 
     class_methods do
       def listen_on_index(name, version)
