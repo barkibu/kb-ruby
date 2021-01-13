@@ -92,6 +92,33 @@ The configuration of the connection to the Knowledge Base is done using ENV vari
   - arg: `filters` hash of filters
   - returns: and array of Cat Breed instances matching the filters
 
+### Make an ActiveRecord wrap a KB entity
+
+The `KB::Concerns::AsKBWrapper` concern has been created in order to easily make an ActiveRecord model wrap a KB model.
+
+To use it, include it into your wrapping model, define an attribute `kb_key` on your wrapping model and call `wrap_kb` with the wrapped KB model class.
+
+You have then access to the wrapped model under `kb_model` and can delegate attributes to it, for instance:
+
+```ruby
+class User < ActiveRecord::Base
+  include KB::Concerns::AsKBWrapper
+
+  wrap_kb model: KB::PetParent
+
+  KB_DELEGATED_ATTRIBUTES = %i[email first_name].freeze
+
+  KB_DELEGATED_ATTRIBUTES.each do |attribute|
+    delegate attribute, to: :kb_model, prefix: false
+    delegate "#{attribute}=", to: :kb_model, prefix: false
+  end
+end
+
+user = User.create(first_name: 'Léo', email: 'leo@barkibu.com')
+p user.kb_model
+# => #<KB::PetParent: 0x000055fd72d32c30 key: "373ad90e-c2ce-46cb-9749-deb2b03be995", first_name: "Léo", ..., email: "leo@barkibu.com">
+```
+
 ### Mock the API calls in test environment
 
 In order to use the FakeApi intercepting calls to the API, make sure `sinatra` is added to the dev dependency of your project. In the spec_helper (or rails_helper if in a rail app), add the following:

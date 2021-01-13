@@ -15,6 +15,7 @@ require 'kb/client_resolver'
 require 'kb/error'
 require 'kb/client'
 
+require 'kb/concerns'
 require 'kb/models'
 
 require 'kb/validators'
