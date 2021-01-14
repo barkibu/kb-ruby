@@ -1,11 +1,12 @@
 require 'spec_helper'
-require 'byebug'
+
 RSpec.describe KB::UniquenessValidator do
   subject(:model) do
     model_class.new(phone_number: phone_number, prefix_phone_number: prefix_phone_number, &:validate)
   end
 
   include_context 'with Mock ActiveRecord Class'
+  include_context 'with a mock as KB API'
 
   let(:model_class) do
     Class.new(active_record_class) do
@@ -21,17 +22,6 @@ RSpec.describe KB::UniquenessValidator do
   end
   let(:phone_number) { '683123123' }
   let(:prefix_phone_number) { '+34' }
-
-  before(:all) do # rubocop:disable RSpec/BeforeAfterAll
-    stub_request(:any, /test_api_barkkb.com/).to_rack(KB::Tests::FakeApi)
-  end
-
-  around do |example|
-    snapshot = KB::Tests::FakeApi.snapshot()
-    stub_request(:any, /test_api_barkkb.com/).to_rack(KB::Tests::FakeApi)
-    example.run
-    KB::Tests::FakeApi.restore snapshot
-  end
 
   context 'with no option provided' do
     let(:uniqueness_validation_options) { true }
