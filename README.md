@@ -96,7 +96,9 @@ The configuration of the connection to the Knowledge Base is done using ENV vari
 
 The `KB::Concerns::AsKBWrapper` concern has been created in order to easily make an ActiveRecord model wrap a KB model.
 
-To use it, include it into your wrapping model, define an attribute `kb_key` on your wrapping model and call `wrap_kb` with the wrapped KB model class.
+To use it:
+- include it into your wrapping model, define an attribute `kb_key` on your wrapping model 
+- call `wrap_kb` with the wrapped KB model class (available option: `skip_callback`)
 
 You have then access to the wrapped model under `kb_model` and can delegate attributes to it, for instance:
 

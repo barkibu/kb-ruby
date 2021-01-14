@@ -28,6 +28,16 @@ RSpec.describe KB::Concerns::AsKBWrapper do
       expect(instance).to have_received(:save_underlying_kb_entity!).ordered
       expect(instance).to have_received(:actually_saving).ordered
     end
+
+    context 'with `skip_callback` option' do
+      let(:skip_callback) { true }
+
+      it 'calls :save_underlying_kb_entity! before actually saving the record' do # rubocop:disable RSpec/MultipleExpectations
+        instance.save
+        expect(instance).not_to have_received(:save_underlying_kb_entity!)
+        expect(instance).to have_received(:actually_saving)
+      end
+    end
   end
 end
 # rubocop:enable RSpec/SubjectStub
