@@ -25,7 +25,7 @@ module BoundedContext
         resources.select do |item|
           filters.slice(*filterable_attributes).reduce(true) do |sum, (key, value)|
             sum && (value.blank? \
-                    || item.fetch(key, '').downcase.include?(value.downcase))
+                    || (item.fetch(key, '') || '').downcase.include?(value.downcase))
           end
         end
       end
