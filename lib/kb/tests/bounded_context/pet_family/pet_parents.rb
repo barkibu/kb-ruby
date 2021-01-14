@@ -10,6 +10,10 @@ module BoundedContext
 
         resource :petparents
 
+        def filterable_attributes
+          KB::PetParent::FIELDS.map { |k| k.to_s.camelize(:lower) }
+        end
+
         get '/v1/petparents/:key/pets' do
           pets = resource_state(:pets).select { |pet| pet['petParentKey'] == params['key'] }
 

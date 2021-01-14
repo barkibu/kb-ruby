@@ -12,6 +12,10 @@ module BoundedContext
 
         resource :pets
 
+        def filterable_attributes
+          KB::Pet::FIELDS.map { |k| k.to_s.camelize(:lower) }
+        end
+
         def on_create_action(name, _version)
           resource = JSON.parse(request.body.read)
           resource['ageCategory'] = stage(resource['birthDate'], resource['species'])
