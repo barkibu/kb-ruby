@@ -12,7 +12,7 @@ module BoundedContext
 
         resource :pets
 
-        def filterable_attributes
+        def pets_filterable_attributes
           KB::Pet::FIELDS.map { |k| k.to_s.camelize(:lower) }
         end
 

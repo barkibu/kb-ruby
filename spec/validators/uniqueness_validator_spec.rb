@@ -1,5 +1,5 @@
 require 'spec_helper'
-
+require 'byebug'
 RSpec.describe KB::UniquenessValidator do
   subject(:model) do
     model_class.new(phone_number: phone_number, prefix_phone_number: prefix_phone_number, &:validate)
@@ -12,7 +12,7 @@ RSpec.describe KB::UniquenessValidator do
     Class.new(active_record_class) do
       include KB::Concerns::AsKBWrapper
 
-      wrap_kb model: KB::Pet
+      wrap_kb model: KB::PetParent
 
       attribute :phone_number, :string
       attribute :prefix_phone_number, :string
@@ -34,7 +34,7 @@ RSpec.describe KB::UniquenessValidator do
 
     context 'with a record already existing in API' do
       before do
-        KB::Pet.create(phone_number: phone_number)
+        KB::PetParent.create(phone_number: phone_number)
       end
 
       it 'mark the attribute as taken' do
@@ -48,7 +48,7 @@ RSpec.describe KB::UniquenessValidator do
 
     context 'with a record partially matching in API' do
       before do
-        KB::Pet.create(phone_number: phone_number)
+        KB::PetParent.create(phone_number: phone_number)
       end
 
       it 'mark the record as valid' do
@@ -58,7 +58,7 @@ RSpec.describe KB::UniquenessValidator do
 
     context 'with a record matching within the scope in API' do
       before do
-        KB::Pet.create(phone_number: phone_number, prefix_phone_number: prefix_phone_number)
+        KB::PetParent.create(phone_number: phone_number, prefix_phone_number: prefix_phone_number)
       end
 
       it 'mark the attribute as taken' do
