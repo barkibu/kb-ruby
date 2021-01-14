@@ -1,34 +1,16 @@
 require 'spec_helper'
 
 # rubocop:disable RSpec/StubbedMock, RSpec/MessageSpies, RSpec/MultipleMemoizedHelpers, RSpec/NestedGroups, RSpec/MultipleExpectations, RSpec/VerifiedDoubles, RSpec/ContextWording
-class MockActiveRecord
-  include ActiveModel::Model
-  include ActiveModel::Attributes
-  define_model_callbacks :save
-
-  attribute :kb_key, :string
-
-  def reload; end
-
-  def save
-    run_callbacks :save do
-      actually_saving
-    end
-  end
-
-  def actually_saving
-    # Active Record Magic saving stuff to the DB
-  end
-end
-
 RSpec.describe KB::Concerns::AsKBWrapper do
+  include_context 'with Mock ActiveRecord Class'
+
   let(:kb_model_class) { double 'KB::Resource::class' }
   let(:kb_model_instance) { double 'KB::Resource::instance' }
   let(:kb_model_new_instance) { double 'KB::Resource::instance' }
 
   let(:model_class) do
     resource_class = kb_model_class
-    Class.new(MockActiveRecord) do
+    Class.new(active_record_class) do
       include KB::Concerns::AsKBWrapper
 
       wrap_kb model: resource_class
