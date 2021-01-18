@@ -7,6 +7,16 @@ module KB
 
     kb_api :pet_parent
 
+    def self.all(filters = {})
+      filters[:partner_key] = ENV['KB_PARTNER_KEY']
+      super(filters)
+    end
+
+    def self.create(attributes = {})
+      attributes[:partner_key] = ENV['KB_PARTNER_KEY']
+      super(attributes)
+    end
+
     def self.attributes_from_response(response)
       response.transform_keys(&:underscore).transform_keys(&:to_sym).slice(*FIELDS)
     end
@@ -35,6 +45,8 @@ module KB
     end
 
     def save!
+      return unless changed?
+
       run_callbacks :save do
         self.attributes = if @persisted
                             self.class.update key, changes.transform_values(&:last)
@@ -48,6 +60,12 @@ module KB
 
     def full_phone_number
       "#{phone_number_prefix}#{phone_number}"
+    end
+
+    def pets
+      self.class.kb_client.request("#{key}/pets").map do |pet|
+        Pet.from_api(pet)
+      end
     end
   end
 end

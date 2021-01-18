@@ -1,9 +1,9 @@
 require 'spec_helper'
 
 RSpec.describe KB::Queryable do
-  include_context 'KB Models Queryable Concerns'
-
   subject(:exposed_kb_client) { including_class.exposed_client }
+
+  include_context 'with KB Models Queryable Concerns'
 
   let(:invalid_class) do
     including_class_factory do |class_self|
@@ -26,7 +26,7 @@ RSpec.describe KB::Queryable do
     expect(including_class.private_methods).to include(:kb_api)
   end
 
-  context 'included in a class not configuring the client' do
+  context 'when included in a class not configuring the client' do
     let(:including_class) { invalid_class }
 
     it 'accessing exposed client raises an error' do
@@ -34,7 +34,7 @@ RSpec.describe KB::Queryable do
     end
   end
 
-  context 'included in a class configuring the client' do
+  context 'when included in a class configuring the client' do
     let(:including_class) { valid_class }
 
     it 'makes the client available on Class level' do

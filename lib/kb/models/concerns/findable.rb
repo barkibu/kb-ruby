@@ -8,8 +8,7 @@ module KB
 
     module ClassMethods
       def find(key)
-        api_response = kb_client.find(key)
-        new attributes_from_response(api_response), &:persist!
+        from_api(kb_client.find(key))
       rescue Faraday::ResourceNotFound
         raise ActiveRecord::RecordNotFound
       end

@@ -1,5 +1,5 @@
 shared_examples 'Localizable Request' do |method|
-  around(:all) do |all|
+  around do |all|
     I18n.with_locale(:es) do
       all.run
     end

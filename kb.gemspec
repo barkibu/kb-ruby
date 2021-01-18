@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.email         = ['leo@barkibu.com']
 
   spec.summary       = "Barkibu's Knowledge Base API sdk"
-  spec.description   = "A wrapper of Barkibu's Knowledge Base Endpoint to make those entities and their respective CRUD operations available to a ruby app"
+  spec.description   = "A wrapper of Barkibu's Knowledge Base Endpoint to make those entities and their respective CRUD operations available to a ruby app" # rubocop:disable Layout/LineLength
   spec.homepage      = 'https://app.barkibu.com'
   spec.license       = 'MIT'
 
@@ -38,9 +38,12 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency 'bundler', '~> 1.17'
   spec.add_development_dependency 'byebug'
-  spec.add_development_dependency 'rake', '~> 10.0'
+  spec.add_development_dependency 'rake', '>= 12.3.3'
   spec.add_development_dependency 'rspec', '~> 3.0'
+  spec.add_development_dependency 'rubocop'
+  spec.add_development_dependency 'rubocop-rspec'
   spec.add_development_dependency 'sinatra'
+  spec.add_development_dependency 'webmock'
   spec.add_runtime_dependency 'activemodel', '>= 4.0.2'
   spec.add_runtime_dependency 'activerecord'
   spec.add_runtime_dependency 'activesupport', '>= 3.0.0'

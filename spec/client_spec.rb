@@ -1,5 +1,6 @@
 require 'spec_helper'
 
+# rubocop:disable RSpec/MultipleMemoizedHelpers
 RSpec.describe KB::Client do
   subject(:client) { described_class.new(base_url, api_key: api_key) }
 
@@ -13,12 +14,10 @@ RSpec.describe KB::Client do
     Faraday::Adapter::Test::Stubs.new
   end
 
-  before(:all) do
+  before do
     I18n.available_locales = %i[en es]
     I18n.default_locale = :en
-  end
 
-  before do
     connection = client.send('connection')
     connection.builder.adapter :test, stubs
   end
@@ -157,3 +156,4 @@ RSpec.describe KB::Client do
     end
   end
 end
+# rubocop:enable RSpec/MultipleMemoizedHelpers
