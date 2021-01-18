@@ -18,17 +18,20 @@ module BoundedContext
       end
 
       def on_index_action(name, _version)
-        json_response 200, filter_resources(resource_state(name), params)
+        json_response 200, filter_resources(name, params)
       end
 
-      def filter_resources(resources, filters)
-        resources.select do |item|
-          filters.reduce(true) do |sum, (key, value)|
+      def filter_resources(name, filters)
+        resource_state(name).select do |item|
+          filters.slice(*filterable_attributes(name)).reduce(true) do |sum, (key, value)|
             sum && (value.blank? \
-                    || !item.key?(key) \
-                    || item[key].downcase.include?(value.downcase))
+                    || (item.fetch(key, '') || '').downcase.include?(value.downcase))
           end
         end
+      end
+
+      def filterable_attributes(name)
+        try("#{name}_filterable_attributes") || []
       end
 
       def on_show_action(name, _version)
