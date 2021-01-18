@@ -19,8 +19,8 @@ module KB
 
       # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/BlockLength
       class_methods do
-        def wrap_kb(model:)
-          before_save :save_underlying_kb_entity!
+        def wrap_kb(model:, skip_callback: false)
+          before_save :save_underlying_kb_entity! unless skip_callback
 
           define_method(:kb_model) do
             underlying_kb_entity = @kb_model
