@@ -123,11 +123,9 @@ p user.kb_model
 
 ### Mock the API calls in test environment
 
-In order to use the FakeApi intercepting calls to the API, make sure `sinatra` is added to the dev dependency of your project. In the spec_helper (or rails_helper if in a rail app), add the following:
+In order to use the FakeApi intercepting calls to the API, add to the spec_helper (or rails_helper if you will):
 
 ```ruby
-    require 'sinatra'
-
     # ...
 
     RSpec.configure do |config|
@@ -146,7 +144,7 @@ In order to use the FakeApi intercepting calls to the API, make sure `sinatra` i
     end
 ```
 
-Make sure to set the `KB_API_URL_TEMPLATE` to something that will match above the request interceptor, for instance: `https://test.api.%{bounded_context}.test_api_barkkb.com/%{version}/%{entity}`
+Make sure to set the `KB_API_URL_TEMPLATE` to something that will match above the request interceptor, for instance: `http://test_api_barkkb.com`
 
 You should be able to use the API seemlessly and the calls to the API will be intercepted and a local one used instead in a similar fashion to how ActiveRecord operations are wrapped into a transaction in a rails app with `use_transactional_fixtures` activated.
 
