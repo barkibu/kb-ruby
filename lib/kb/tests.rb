@@ -1,4 +1,5 @@
 def require_or_exit(gem)
+  require gem
 rescue LoadError
   puts "#{gem.capitalize} was not found, please add \"gem \"#{gem}\"\" to your Gemfile."
   exit 1
