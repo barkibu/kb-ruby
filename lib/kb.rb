@@ -20,5 +20,3 @@ require 'kb/concerns'
 require 'kb/models'
 
 require 'kb/validators'
-
-require 'kb/tests'
