@@ -4,7 +4,7 @@ module Type
 
     def cast(value)
       (value || []).map do |v|
-        return v if v.is_a? KB::Symptom
+        next v if v.is_a? KB::Symptom
 
         KB::Symptom.new v.symbolize_keys.slice(*SYMPTOM_KEYS)
       end
