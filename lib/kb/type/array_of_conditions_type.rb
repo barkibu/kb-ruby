@@ -4,7 +4,7 @@ module Type
 
     def cast(value)
       (value || []).map do |v|
-        return v if v.is_a? KB::Condition
+        next v if v.is_a? KB::Condition
 
         KB::Condition.new v.symbolize_keys.slice(*CONDITION_KEYS)
       end
