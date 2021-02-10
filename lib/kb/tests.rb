@@ -8,4 +8,5 @@ end
 require_or_exit 'sinatra'
 require_or_exit 'webmock'
 
+require 'active_support'
 require 'kb/tests/fake_api'
