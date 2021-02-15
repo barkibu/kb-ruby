@@ -1,4 +1,4 @@
-require 'kb/tests/bounded_context/rest_resource'
+require 'kb/fake/bounded_context/rest_resource'
 require 'date'
 
 module BoundedContext

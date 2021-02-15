@@ -3,13 +3,13 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'kb/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'kb'
+  spec.name          = 'kb-fake'
   spec.version       = KB::VERSION
   spec.authors       = ['Léo Figea']
   spec.email         = ['leo@barkibu.com']
 
-  spec.summary       = "Barkibu's Knowledge Base API sdk"
-  spec.description   = "A wrapper of Barkibu's Knowledge Base Endpoint to make those entities and their respective CRUD operations available to a ruby app" # rubocop:disable Layout/LineLength
+  spec.summary       = "Barkibu's Knowledge Base Fake API"
+  spec.description   = "A fake API of Barkibu's Knowledge Base destined to be used in tests for application using the kb-ruby gem." # rubocop:disable Layout/LineLength
   spec.homepage      = 'https://app.barkibu.com'
   spec.license       = 'MIT'
 
@@ -28,25 +28,19 @@ Gem::Specification.new do |spec|
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
-  spec.files = Dir.chdir(File.expand_path(__dir__)) do
-    `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
-  end
+  spec.files = `git ls-files -- lib | grep fake`.split("\n").reject { |f| f.match(%r{^(test|spec|features)/}) }
   spec.bindir        = 'exe'
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 2.6'
 
   spec.add_development_dependency 'bundler', '~> 1.17'
-  spec.add_development_dependency 'byebug'
   spec.add_development_dependency 'rake', '>= 12.3.3'
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'rubocop'
   spec.add_development_dependency 'rubocop-rspec'
-  spec.add_runtime_dependency 'activemodel', '>= 4.0.2'
-  spec.add_runtime_dependency 'activerecord'
   spec.add_runtime_dependency 'activesupport', '>= 3.0.0'
-  spec.add_runtime_dependency 'faraday'
-  spec.add_runtime_dependency 'faraday-http'
-  spec.add_runtime_dependency 'faraday_middleware'
-  spec.add_runtime_dependency 'i18n'
+  spec.add_runtime_dependency 'kb', KB::VERSION
+  spec.add_runtime_dependency 'sinatra'
+  spec.add_runtime_dependency 'webmock'
 end

@@ -9,6 +9,9 @@ PATH
       faraday-http
       faraday_middleware
       i18n
+    kb-fake (0.2.3)
+      activesupport (>= 3.0.0)
+      kb (= 0.2.3)
       sinatra
       webmock
 
@@ -132,6 +135,7 @@ DEPENDENCIES
   bundler (~> 1.17)
   byebug
   kb!
+  kb-fake!
   rake (>= 12.3.3)
   rspec (~> 3.0)
   rubocop

@@ -150,12 +150,11 @@ p user.kb_model
 
 ### Mock the API calls in test environment
 
-For testing purposes, you may want to fake Knowledge Base’s API calls. We provide a FakeApi app that you can use including kb/tests.
+For testing purposes, you may want to fake Knowledge Base’s API calls. We provide a FakeApi app that you can use including kb/fake.
 
 Add gem webmock and gem sinatra to your Gemfile to use the following configuration:
 
 ```ruby
-    require 'kb/tests'
     # ...
 
     RSpec.configure do |config|

@@ -6,7 +6,7 @@ RSpec.describe KB::Concerns::AsKBWrapper do
   let(:instance) { model_class.new(kb_key: kb_key) }
 
   describe '#kb_find_by' do
-    subject(:kb_find_by) { model_class.kb_find_by(params) }
+    subject(:kb_find_by) { model_class.kb_find_by(**params) }
 
     before do
       allow(kb_model_class).to receive(:all).and_return [kb_model_instance]
@@ -38,7 +38,7 @@ RSpec.describe KB::Concerns::AsKBWrapper do
   end
 
   describe '#kb_find_by!' do
-    subject(:kb_find_by!) { model_class.kb_find_by!(params) }
+    subject(:kb_find_by!) { model_class.kb_find_by!(**params) }
 
     before do
       allow(model_class).to receive(:kb_find_by).with(params).and_return(instance) # Setting a spy

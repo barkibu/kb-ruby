@@ -1,6 +1,5 @@
 require 'pathname'
 require 'bundler/setup'
-require 'sinatra'
 require 'webmock/rspec'
 require 'kb'
 

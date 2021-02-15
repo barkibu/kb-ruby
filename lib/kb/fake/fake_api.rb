@@ -1,8 +1,8 @@
-require 'kb/tests/bounded_context/pet_family/pet_parents'
-require 'kb/tests/bounded_context/pet_family/pets'
+require 'kb/fake/bounded_context/pet_family/pet_parents'
+require 'kb/fake/bounded_context/pet_family/pets'
 
 module KB
-  module Tests
+  module Fake
     class ApiState
       attr_accessor :petparents, :pets, :consultations
 
@@ -32,7 +32,7 @@ module KB
       end
 
       def self.restore(snapshot)
-        set :state, ApiState.new(snapshot)
+        set :state, ApiState.new(**snapshot)
       end
 
       def resource_state(name)
