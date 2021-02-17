@@ -22,6 +22,11 @@ Metrics/BlockLength:
   Exclude:
     - 'spec/**/*.rb'
     - 'kb.gemspec'
+    - 'kb-*.gemspec'
+
+Naming/FileName:
+  Exclude:
+    - 'lib/kb-*.rb'
 
 Style/FrozenStringLiteralComment:
   Enabled: false

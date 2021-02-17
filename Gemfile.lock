@@ -9,9 +9,9 @@ PATH
       faraday-http
       faraday_middleware
       i18n
-    kb-fake (0.2.3)
+    kb-fake (0.2.4)
       activesupport (>= 3.0.0)
-      kb (= 0.2.3)
+      kb (= 0.2.4)
       sinatra
       webmock
 
@@ -122,7 +122,7 @@ GEM
       unf_ext
     unf_ext (0.0.7.7)
     unicode-display_width (2.0.0)
-    webmock (3.11.3)
+    webmock (3.12.1)
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)

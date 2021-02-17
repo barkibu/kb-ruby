@@ -21,14 +21,14 @@ module KB
       end
     end
 
-    class FakeApi < Sinatra::Base
+    class Api < Sinatra::Base
       include BoundedContext::PetFamily::Pets
       include BoundedContext::PetFamily::PetParents
 
       set :state, ApiState.new
 
       def self.snapshot
-        FakeApi.state.to_snapshot
+        Api.state.to_snapshot
       end
 
       def self.restore(snapshot)
@@ -36,11 +36,11 @@ module KB
       end
 
       def resource_state(name)
-        FakeApi.state.send(name)
+        Api.state.send(name)
       end
 
       def set_resource_state(name, value)
-        FakeApi.state.send("#{name}=", value)
+        Api.state.send("#{name}=", value)
       end
 
       resource :consultations, except: %i[create update destroy]
