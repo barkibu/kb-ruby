@@ -28,7 +28,7 @@ module KB
             if underlying_kb_entity.blank?
               underlying_kb_entity = begin
                 model.find kb_key
-              rescue ActiveRecord::RecordNotFound
+              rescue KB::ResourceNotFound
                 model.new
               end
 

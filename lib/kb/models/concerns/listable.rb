@@ -14,7 +14,7 @@ module KB
       rescue Faraday::ConnectionFailed => e
         raise e
       rescue Faraday::Error => e
-        KB::Error.new(e.response[:status], e.response[:body])
+        raise KB::Error.new(e.response[:status], e.response[:body], e)
       end
     end
   end

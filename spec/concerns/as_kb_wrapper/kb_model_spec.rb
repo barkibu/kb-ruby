@@ -28,7 +28,7 @@ RSpec.describe KB::Concerns::AsKBWrapper do
 
     context 'when the KB resource is not found' do
       before do
-        allow(kb_model_class).to receive(:find).and_raise(ActiveRecord::RecordNotFound)
+        allow(kb_model_class).to receive(:find).and_raise(KB::ResourceNotFound.new(404, 'Resource Not Found', nil))
       end
 
       it 'returns a fresh KB resource if not found' do
