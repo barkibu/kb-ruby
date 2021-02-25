@@ -53,6 +53,9 @@ module KB
         conn.params['locale'] = I18n.locale
         conn.response :json
         conn.response :raise_error
+        conn.response :logger do |logger|
+          logger.filter(/(X-api-key:\s)("\w+")/, '\1[API_KEY_SCRUBBED]')
+        end
         conn.adapter :http
       end
     end
