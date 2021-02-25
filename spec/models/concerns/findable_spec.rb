@@ -15,7 +15,7 @@ RSpec.describe KB::Findable do
 
   it 'calls `find` on the configured client' do
     find
-    expect(kb_client).to have_received(:find).with(key)
+    expect(kb_client).to have_received(:find).with(key, {})
   end
 
   context 'when the api call succeeds' do

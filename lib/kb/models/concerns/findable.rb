@@ -7,8 +7,8 @@ module KB
     end
 
     module ClassMethods
-      def find(key)
-        from_api(kb_client.find(key))
+      def find(key, params = {})
+        from_api(kb_client.find(key, params))
       rescue Faraday::ResourceNotFound
         raise ActiveRecord::RecordNotFound
       end

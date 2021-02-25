@@ -15,9 +15,6 @@ RSpec.describe KB::Client do
   end
 
   before do
-    I18n.available_locales = %i[en es]
-    I18n.default_locale = :en
-
     connection = client.send('connection')
     connection.builder.adapter :test, stubs
   end
@@ -33,10 +30,6 @@ RSpec.describe KB::Client do
     let(:api_error) { [422, {}, 'Something went wrong'] }
     let(:filters) { { foo: 'bar' } }
     let(:resources) { [{ my: 'first_resource' }, { my: 'second_resource' }] }
-
-    it_behaves_like 'Localizable Request' do
-      let(:resource_path) { path }
-    end
 
     it 'launches a GET request' do
       stubs.get(path) { |_env| api_response }
@@ -84,8 +77,6 @@ RSpec.describe KB::Client do
     let(:resource) { { key: key, foo: 'bar' } }
     let(:resource_path) { "#{path}/#{key}" }
 
-    it_behaves_like 'Localizable Request'
-
     it 'launches a GET request' do
       stubs.get(resource_path) { |_env| api_response }
       find
@@ -122,10 +113,6 @@ RSpec.describe KB::Client do
     let(:api_error) { [422, {}, 'Invalid something'] }
     let(:attributes) { { attribute_a: 'value 1', foo: 'bar' } }
     let(:created_entity) { attributes.merge(key: 'key') }
-
-    it_behaves_like 'Localizable Request', :post do
-      let(:resource_path) { path }
-    end
 
     it 'launches a POST request' do
       stubs.post(path) { |_env| api_response }

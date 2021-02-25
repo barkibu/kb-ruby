@@ -1,5 +1,7 @@
 shared_examples 'Localizable Request' do |method|
   around do |all|
+    I18n.available_locales = %i[en es]
+    I18n.default_locale = :en
     I18n.with_locale(:es) do
       all.run
     end

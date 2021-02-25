@@ -15,10 +15,10 @@ module KB
       connection.get('', attributes_case_transform(filters)).body
     end
 
-    def find(key)
+    def find(key, params = {})
       raise Faraday::ResourceNotFound, {} if key.blank?
 
-      connection.get(key).body
+      connection.get(key, attributes_case_transform(params)).body
     end
 
     def create(attributes)
@@ -50,7 +50,6 @@ module KB
 
     def connection
       @connection ||= Faraday.new(url: base_url, headers: headers) do |conn|
-        conn.params['locale'] = I18n.locale
         conn.response :json
         conn.response :raise_error
         conn.response :logger do |logger|
