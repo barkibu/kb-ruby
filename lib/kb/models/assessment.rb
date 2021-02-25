@@ -12,6 +12,16 @@ module KB
         all(user: pet.kb_key)
       end
 
+      def all(filters = {})
+        filters[:locale] ||= I18n.locale
+        super(filters)
+      end
+
+      def find(key, params = {})
+        params[:locale] ||= I18n.locale
+        super(key, params)
+      end
+
       private
 
       def attributes_from_response(response)

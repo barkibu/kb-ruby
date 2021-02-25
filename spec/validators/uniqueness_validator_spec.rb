@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'byebug'
+
 RSpec.describe KB::UniquenessValidator do
   subject(:model) do
     model_class.new(phone_number: phone_number, prefix_phone_number: prefix_phone_number, &:validate)
