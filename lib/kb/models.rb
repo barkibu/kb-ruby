@@ -6,7 +6,7 @@ require 'kb/models/symptom'
 require 'kb/models/assessment'
 
 require 'kb/models/pet_parent'
-
 require 'kb/models/pet'
-
+require 'kb/models/plan'
+require 'kb/models/pet_contract'
 require 'kb/models/breed'
