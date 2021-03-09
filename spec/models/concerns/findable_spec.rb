@@ -44,10 +44,10 @@ RSpec.describe KB::Findable do
     end
 
     context 'when the exception is Faraday::ResourceNotFound' do
-      let(:api_exception) { Faraday::ResourceNotFound.new 'Ooops' }
+      let(:api_exception) { Faraday::ResourceNotFound.new status_code: 404, body: 'Resource Not found' }
 
-      it 'raises an ActiveRecord::RecordNotFound exception' do
-        expect { find }.to raise_exception ActiveRecord::RecordNotFound
+      it 'raises an KB::ResourceNotFound exception' do
+        expect { find }.to raise_exception KB::ResourceNotFound
       end
     end
   end
