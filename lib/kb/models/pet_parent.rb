@@ -1,9 +1,8 @@
 module KB
   class PetParent < BaseModel
     include Findable
-    include Creatable
     include Updatable
-    include Listable
+    include FindOrCreatable
 
     kb_api :pet_parent
 
@@ -23,7 +22,7 @@ module KB
 
     private_class_method :attributes_from_response
 
-    STRING_FIELDS = %i[key first_name last_name prefix_phone_number phone_number email].freeze
+    STRING_FIELDS = %i[key partner_key first_name last_name prefix_phone_number phone_number email].freeze
     FIELDS = [*STRING_FIELDS].freeze
 
     define_attribute_methods(*FIELDS)

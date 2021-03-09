@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/MethodLength, Metrics/AbcSize
 shared_context 'with KB Models Queryable Concerns' do
   let(:kb_client) { instance_double 'KB::Client' }
   let(:api_exception) { StandardError.new 'An Exception' }
@@ -13,11 +14,18 @@ shared_context 'with KB Models Queryable Concerns' do
 
       kb_api client if client.present?
 
+      attribute :foo, :string
+      attribute :partner, :string
+
       yield self if block_given?
+
+      def self.attributes_from_response(attributes)
+        attributes.slice(:foo, :partner)
+      end
     end
 
-    allow(including_class).to receive(:attributes_from_response).and_return({})
-
+    allow(including_class).to receive(:attributes_from_response).and_call_original
     including_class
   end
 end
+# rubocop:enable Metrics/AbcSize, Metrics/MethodLength
