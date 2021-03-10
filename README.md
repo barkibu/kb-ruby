@@ -42,11 +42,11 @@ The configuration of the connection to the Knowledge Base is done using ENV vari
   - arg: `key` string
   - returns: a PetParent instance when provided an existing key or raise `ActiveRecord::RecordNotFound`
 - `create`
-  - arg: `attributes`, `&block` to initialize the entity 
-  - returns: a PetParent instance
+  - arg: `attributes` to initialize the entity 
+  - returns: the raw attributes of the created PetParent instance
   - throws an `KB::Error` exception if something went wrong
 - `find_or_create_by`
-  - arg: `attributes`, `&block` to look for or initialize the entity 
+  - arg: `attributes`, `additional_attributes` to look for or initialize the entity 
   - returns: look for a PetParent matching the passed attributes or initialize and persist one with the given attributes and launching the block provided
   - throws an `KB::Error` exception if something went wrong
 - `all`
@@ -84,11 +84,11 @@ The configuration of the connection to the Knowledge Base is done using ENV vari
   - arg: `filters` hash of filters
   - returns: an array of Pet instances matching the filters
 - `create`
-  - arg: `attributes`, `&block` to initialize the entity 
-  - returns: a Pet instance
+  - arg: `attributes` to initialize the entity 
+  - returns: the raw attributes of the Pet instance
   - throws an `KB::Error` exception if something went wrong
 - `find_or_create_by`
-  - arg: `attributes`, `&block` to look for or initialize the entity 
+  - arg: `attributes`, `additional_attributes` to look for or initialize the entity 
   - returns: look for a Pet matching the passed attributes or initialize and persist one with the given attributes and launching the block provided
   - throws an `KB::Error` exception if something went wrong
 #### Breed

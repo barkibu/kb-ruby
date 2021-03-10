@@ -2,9 +2,7 @@ require 'spec_helper'
 
 RSpec.describe KB::FindOrCreatable do
   subject(:find_or_create_by) do
-    including_class.find_or_create_by(attributes) do |entity|
-      entity.foo = 'overriden'
-    end
+    including_class.find_or_create_by(attributes, { another_foo: 'value' })
   end
 
   include_context 'with KB Models Queryable Concerns'
@@ -26,7 +24,7 @@ RSpec.describe KB::FindOrCreatable do
   context 'when no matching entity exists' do
     it 'calls `create` on the configured kb_client' do
       find_or_create_by
-      expect(kb_client).to have_received(:create).with(attributes.merge(foo: 'overriden').stringify_keys)
+      expect(kb_client).to have_received(:create).with(attributes.merge(another_foo: 'value'))
     end
   end
 
