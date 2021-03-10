@@ -1,15 +1,16 @@
 module KB
-  module Creatable
+  module FindOrCreatable
     extend ActiveSupport::Concern
 
     included do
       include Queryable
+      include Listable
+      include Creatable
     end
 
     module ClassMethods
-      def create(attributes, &block)
-        kb_entity = new(attributes.stringify_keys.slice(*attribute_names), &block)
-        from_api(kb_client.create(kb_entity.attributes))
+      def find_or_create_by(attributes, &block)
+        all(attributes).first || create(attributes, &block)
       rescue Faraday::Error => e
         raise KB::Error.new(e.response[:status], e.response[:body], e)
       end

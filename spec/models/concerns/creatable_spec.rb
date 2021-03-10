@@ -14,7 +14,7 @@ RSpec.describe KB::Creatable do
 
   it 'calls `create` on the configured kb_client' do
     create
-    expect(kb_client).to have_received(:create).with(attributes)
+    expect(kb_client).to have_received(:create).with(attributes.with_indifferent_access)
   end
 
   context 'when the api accepts the CREATE' do
@@ -23,8 +23,8 @@ RSpec.describe KB::Creatable do
       expect(including_class).to have_received(:attributes_from_response).with(created_entity)
     end
 
-    it 'returns the result of `attributes_from_response`' do
-      expect(create).to eq(including_class.attributes_from_response(created_entity))
+    it 'returns an instance of the including class' do
+      expect(create).to be_a(including_class)
     end
   end
 

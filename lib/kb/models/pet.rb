@@ -1,9 +1,8 @@
 module KB
   class Pet < BaseModel
-    include Listable
     include Findable
-    include Creatable
     include Updatable
+    include FindOrCreatable
 
     kb_api :pet
 
