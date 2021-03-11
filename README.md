@@ -55,6 +55,9 @@ The configuration of the connection to the Knowledge Base is done using ENV vari
 - `save!`
   - persists (create or update) the entity to the Knowledge Base
   - throws an `KB::Error` exception if something went wrong
+- `destroy!`
+  - deletes the entity in the Knowledge Base
+  - throws a `KB::Error` exception if something went wrong
 
 
 #### Assessment 📄
@@ -91,6 +94,13 @@ The configuration of the connection to the Knowledge Base is done using ENV vari
   - arg: `attributes`, `additional_attributes` to look for or initialize the entity 
   - returns: look for a Pet matching the passed attributes or initialize and persist one with the given attributes and launching the block provided
   - throws an `KB::Error` exception if something went wrong
+- `save!`
+  - persists (create or update) the entity to the Knowledge Base
+  - throws an `KB::Error` exception if something went wrong
+- `destroy!`
+  - deletes the entity in the Knowledge Base
+  - throws a `KB::Error` exception if something went wrong
+  
 #### Breed
 
 ```

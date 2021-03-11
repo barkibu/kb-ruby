@@ -43,7 +43,7 @@ module KB
         FakeApi.state.send("#{name}=", value)
       end
 
-      resource :consultations, except: %i[create update]
+      resource :consultations, except: %i[create update destroy]
     end
   end
 end

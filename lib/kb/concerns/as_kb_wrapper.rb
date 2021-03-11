@@ -11,6 +11,10 @@ module KB
           self.kb_key = kb_model.key if kb_model.key.present?
         end
 
+        def destroy_underlying_kb_entity
+          kb_model.destroy!
+        end
+
         def reload(**options)
           @kb_model = nil
           super(**options)
@@ -21,6 +25,7 @@ module KB
       class_methods do
         def wrap_kb(model:, skip_callback: false)
           before_save :save_underlying_kb_entity! unless skip_callback
+          before_destroy :destroy_underlying_kb_entity unless skip_callback
 
           define_method(:kb_model) do
             underlying_kb_entity = @kb_model
