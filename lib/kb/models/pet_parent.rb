@@ -3,6 +3,7 @@ module KB
     include Findable
     include Updatable
     include FindOrCreatable
+    include Destroyable
 
     kb_api :pet_parent
 
@@ -23,7 +24,8 @@ module KB
     private_class_method :attributes_from_response
 
     STRING_FIELDS = %i[key partner_key first_name last_name prefix_phone_number phone_number email].freeze
-    FIELDS = [*STRING_FIELDS].freeze
+    DATE_FIELDS = %i[deleted_at].freeze
+    FIELDS = [*STRING_FIELDS, *DATE_FIELDS, :birth_date].freeze
 
     define_attribute_methods(*FIELDS)
 
@@ -55,6 +57,18 @@ module KB
 
         self
       end
+    end
+
+    def destroyed?
+      @destroyed
+    end
+
+    def destroy!
+      return unless @persisted
+
+      self.class.destroy key
+      @destroyed = true
+      freeze
     end
 
     def full_phone_number

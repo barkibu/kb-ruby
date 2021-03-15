@@ -29,6 +29,10 @@ module KB
       connection.patch(key.to_s, attributes_to_json(attributes)).body
     end
 
+    def destroy(key)
+      connection.delete(key.to_s).body
+    end
+
     private
 
     def headers

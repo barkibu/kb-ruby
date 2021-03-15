@@ -142,5 +142,34 @@ RSpec.describe KB::Client do
       end
     end
   end
+
+  describe '#destroy' do
+    subject(:destroy) { client.destroy(key) }
+
+    let(:api_response) { [204, {}] }
+    let(:key) { 'identifying_key' }
+    let(:resource_path) { "#{path}/#{key}" }
+
+    it 'launches a DELETE request' do
+      stubs.delete(resource_path) { |_env| api_response }
+      destroy
+      stubs.verify_stubbed_calls
+    end
+
+    it 'passes the authorization headers' do
+      stubs.delete(resource_path) do |env|
+        expect(env.request_headers).to include authorization_headers
+        api_response
+      end
+      destroy
+    end
+
+    context 'with a successful request' do
+      it 'returns no content' do
+        stubs.delete(resource_path) { |_env| api_response }
+        expect(destroy).to eq(nil)
+      end
+    end
+  end
 end
 # rubocop:enable RSpec/MultipleMemoizedHelpers

@@ -10,7 +10,7 @@ RSpec.describe KB::Concerns::AsKBWrapper do
     before do
       allow(instance).to receive(:kb_key=).and_call_original # Setting a spy
       allow(instance).to receive(:save_underlying_kb_entity!).and_call_original # Setting a spy
-      allow(instance).to receive(:actually_saving).and_call_original # Setting a spy
+      allow(instance).to receive(:actually_acting).and_call_original # Setting a spy
     end
 
     it 'calls `save` on the underlying kb resource' do
@@ -26,7 +26,7 @@ RSpec.describe KB::Concerns::AsKBWrapper do
     it 'calls :save_underlying_kb_entity! before actually saving the record' do # rubocop:disable RSpec/MultipleExpectations
       instance.save
       expect(instance).to have_received(:save_underlying_kb_entity!).ordered
-      expect(instance).to have_received(:actually_saving).ordered
+      expect(instance).to have_received(:actually_acting).ordered
     end
 
     context 'with `skip_callback` option' do
@@ -35,7 +35,7 @@ RSpec.describe KB::Concerns::AsKBWrapper do
       it 'calls :save_underlying_kb_entity! before actually saving the record' do # rubocop:disable RSpec/MultipleExpectations
         instance.save
         expect(instance).not_to have_received(:save_underlying_kb_entity!)
-        expect(instance).to have_received(:actually_saving)
+        expect(instance).to have_received(:actually_acting)
       end
     end
   end
