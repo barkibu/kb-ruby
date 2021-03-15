@@ -25,7 +25,7 @@ module KB
 
     STRING_FIELDS = %i[key partner_key first_name last_name prefix_phone_number phone_number email].freeze
     DATE_FIELDS = %i[deleted_at].freeze
-    FIELDS = [*STRING_FIELDS, *DATE_FIELDS, :birth_date].freeze
+    FIELDS = [*STRING_FIELDS, *DATE_FIELDS].freeze
 
     define_attribute_methods(*FIELDS)
 
@@ -34,6 +34,10 @@ module KB
 
     STRING_FIELDS.each do |field|
       attribute field, :string
+    end
+
+    DATE_FIELDS.each do |field|
+      attribute field, :date
     end
 
     attribute :first_name, :string, default: ''

@@ -14,9 +14,9 @@ module KB
     private_class_method :attributes_from_response
 
     STRING_FIELDS = %i[key pet_parent_key name age_category sex breed chip species].freeze
-    DATE_FIELDS = %i[deleted_at].freeze
+    DATE_FIELDS = %i[birth_date deleted_at].freeze
     BOOLEAN_FIELDS = %i[neutered mongrel].freeze
-    FIELDS = [*STRING_FIELDS, *DATE_FIELDS, *BOOLEAN_FIELDS, :birth_date].freeze
+    FIELDS = [*STRING_FIELDS, *DATE_FIELDS, *BOOLEAN_FIELDS].freeze
 
     define_attribute_methods(*FIELDS)
 
@@ -28,7 +28,9 @@ module KB
       attribute field, :boolean
     end
 
-    attribute :birth_date, :date
+    DATE_FIELDS.each do |field|
+      attribute field, :date
+    end
 
     FIELDS.each do |field|
       define_method :"#{field}=" do |value|
