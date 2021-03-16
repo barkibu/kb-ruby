@@ -66,8 +66,8 @@ module KB
     end
 
     def contracts
-      self.class.kb_client.request("#{key}/petcontracts").map do |contract|
-        PetContracts.from_api(contract)
+      self.class.kb_client.request("#{key}/contracts").map do |contract|
+        PetContract.from_api(contract)
       end
     end
   end

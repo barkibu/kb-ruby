@@ -6,6 +6,14 @@ module KB
 
     kb_api :pet_contract
 
+    def self.find_by_contract_number(contract_number)
+      from_api(kb_client.request("contractnumber/#{contract_number}"))
+    rescue Faraday::ResourceNotFound => e
+      raise KB::ResourceNotFound.new(e.response[:status], e.response[:body], e)
+    rescue Faraday::Error => e
+      raise KB::Error.new(e.response[:status], e.response[:body], e)
+    end
+
     def self.attributes_from_response(response)
       response.transform_keys(&:underscore).transform_keys(&:to_sym).slice(*FIELDS)
     end
@@ -16,6 +24,8 @@ module KB
     DATE_FIELDS = %i[policy_start_date policy_expiration_date].freeze
     INTEGER_FIELDS = %i[price_yearly price_monthly].freeze
     FIELDS = [*STRING_FIELDS, *DATE_FIELDS, *INTEGER_FIELDS].freeze
+
+    IMMUTABLE_FIELDS = (FIELDS - %i[status contract_document policy_expiration_date]).freeze
 
     define_attribute_methods(*FIELDS)
 
@@ -33,6 +43,8 @@ module KB
 
     FIELDS.each do |field|
       define_method :"#{field}=" do |value|
+        return if persisted? && IMMUTABLE_FIELDS.include?(field)
+
         public_send "#{field}_will_change!"
         super(value)
       end
@@ -50,6 +62,14 @@ module KB
 
         self
       end
+    end
+
+    def plan
+      @plan ||= Plan.all.select { |plan| plan.key == plan_key }
+    end
+
+    def pet
+      @pet ||= Pet.find(pet_key)
     end
   end
 end
