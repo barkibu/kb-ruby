@@ -7,11 +7,7 @@ module KB
     kb_api :pet_contract
 
     def self.find_by_contract_number(contract_number)
-      from_api(kb_client.request("contractnumber/#{contract_number}"))
-    rescue Faraday::ResourceNotFound => e
-      raise KB::ResourceNotFound.new(e.response[:status], e.response[:body], e)
-    rescue Faraday::Error => e
-      raise KB::Error.new(e.response[:status], e.response[:body], e)
+      find("contractnumber/#{contract_number}")
     end
 
     def self.attributes_from_response(response)

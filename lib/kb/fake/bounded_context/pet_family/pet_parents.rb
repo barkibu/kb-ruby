@@ -15,9 +15,20 @@ module BoundedContext
         end
 
         get '/v1/petparents/:key/pets' do
-          pets = resource_state(:pets).select { |pet| pet['petParentKey'] == params['key'] }
+          json_response 200, pets_by_pet_parent_key(params['key'])
+        end
 
-          json_response 200, pets
+        get '/v1/petparents/:key/contracts' do
+          pet_keys = pets_by_pet_parent_key(params['key']).map { |pet| pet['key'] }
+          contracts = resource_state(:petcontracts).select { |contract| pet_keys.include? contract['petKey'] }
+
+          json_response 200, contracts
+        end
+
+        private
+
+        def pets_by_pet_parent_key(key)
+          resource_state(:pets).select { |pet| pet['petParentKey'] == key }
         end
       end
     end

@@ -1,4 +1,4 @@
-require 'kb/tests/bounded_context/rest_resource'
+require 'kb/fake/bounded_context/rest_resource'
 
 module BoundedContext
   module PetFamily
@@ -8,13 +8,16 @@ module BoundedContext
       included do
         include RestResource
 
-        resource :petcontracts, except: %i[index]
+        get '/v1/petcontracts/contractnumber/:contract_number' do
+          resource = resource_state(:petcontracts).detect do |contract|
+            contract['contractNumber'] == params['contract_number']
+          end
+          return json_response 404, {} if resource.nil?
 
-        def petcontracts_filterable_attributes
-          KB::PetContract::FIELDS.map { |k| k.to_s.camelize(:lower) }
+          json_response 200, resource
         end
 
-        # TODO: Add basic exceptions for PetKey missing etc
+        resource :petcontracts, except: %i[index destroy]
       end
     end
   end
