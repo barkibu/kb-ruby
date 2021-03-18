@@ -1,8 +1,8 @@
-require 'kb/tests/bounded_context/pet_family/pet_parents'
-require 'kb/tests/bounded_context/pet_family/pets'
+require 'kb/fake/bounded_context/pet_family/pet_parents'
+require 'kb/fake/bounded_context/pet_family/pets'
 
 module KB
-  module Tests
+  module Fake
     class ApiState
       attr_accessor :petparents, :pets, :consultations
 
@@ -21,26 +21,26 @@ module KB
       end
     end
 
-    class FakeApi < Sinatra::Base
+    class Api < Sinatra::Base
       include BoundedContext::PetFamily::Pets
       include BoundedContext::PetFamily::PetParents
 
       set :state, ApiState.new
 
       def self.snapshot
-        FakeApi.state.to_snapshot
+        Api.state.to_snapshot
       end
 
       def self.restore(snapshot)
-        set :state, ApiState.new(snapshot)
+        set :state, ApiState.new(**snapshot)
       end
 
       def resource_state(name)
-        FakeApi.state.send(name)
+        Api.state.send(name)
       end
 
       def set_resource_state(name, value)
-        FakeApi.state.send("#{name}=", value)
+        Api.state.send("#{name}=", value)
       end
 
       resource :consultations, except: %i[create update destroy]
