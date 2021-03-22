@@ -1,6 +1,22 @@
 require 'pathname'
 require 'bundler/setup'
 require 'webmock/rspec'
+require 'simplecov'
+
+SimpleCov.profiles.define 'kb' do
+  add_filter '/bin/'
+  add_filter '/spec/'
+
+  add_group 'Models', 'lib/kb/models'
+  add_group 'Concerns', 'lib/kb/concerns'
+  add_group 'Fake', 'lib/kb/fake'
+  add_group 'Type', 'lib/kb/type'
+  add_group 'Validator', 'lib/kb/validator'
+  add_group 'Client', ['lib/kb/client', 'lib/kb/client_resolver']
+end
+
+SimpleCov.start 'kb'
+
 require 'kb'
 
 gem_root = Pathname.new('..').expand_path(File.dirname(__FILE__))
