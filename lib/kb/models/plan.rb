@@ -10,8 +10,9 @@ module KB
 
     private_class_method :attributes_from_response
 
-    STRING_FIELDS = %i[key description benefits name type].freeze
-    FIELDS = [*STRING_FIELDS, :plan_life, :purchasable].freeze
+    STRING_FIELDS = %i[key description name type].freeze
+    HASH_FIELDS = %i[benefits price].freeze
+    FIELDS = [*STRING_FIELDS, *HASH_FIELDS, :plan_life, :purchasable].freeze
 
     define_attribute_methods(*FIELDS)
 
@@ -20,6 +21,10 @@ module KB
 
     STRING_FIELDS.each do |field|
       attribute field, :string
+    end
+
+    HASH_FIELDS.each do |field|
+      attribute field
     end
 
     FIELDS.each do |field|
