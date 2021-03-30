@@ -13,8 +13,16 @@ module KB
         call :petfamily, :pets
       end
 
+      def pet_contract
+        call :petfamily, :petcontracts
+      end
+
       def breed
         call '', :breeds
+      end
+
+      def plan
+        call :petfamily, :plans
       end
 
       def call(*args, &block)

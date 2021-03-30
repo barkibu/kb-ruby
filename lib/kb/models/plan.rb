@@ -1,11 +1,8 @@
 module KB
-  class Pet < BaseModel
-    include Findable
-    include Updatable
-    include FindOrCreatable
-    include Destroyable
+  class Plan < BaseModel
+    include Listable
 
-    kb_api :pet
+    kb_api :plan
 
     def self.attributes_from_response(response)
       response.transform_keys(&:underscore).transform_keys(&:to_sym).slice(*FIELDS)
@@ -13,23 +10,21 @@ module KB
 
     private_class_method :attributes_from_response
 
-    STRING_FIELDS = %i[key pet_parent_key name age_category sex breed chip species].freeze
-    DATE_FIELDS = %i[birth_date deleted_at].freeze
-    BOOLEAN_FIELDS = %i[neutered mongrel].freeze
-    FIELDS = [*STRING_FIELDS, *DATE_FIELDS, *BOOLEAN_FIELDS].freeze
+    STRING_FIELDS = %i[key description name type].freeze
+    HASH_FIELDS = %i[benefits price].freeze
+    FIELDS = [*STRING_FIELDS, *HASH_FIELDS, :plan_life, :purchasable].freeze
 
     define_attribute_methods(*FIELDS)
+
+    attribute :plan_life, :integer
+    attribute :purchasable, :boolean
 
     STRING_FIELDS.each do |field|
       attribute field, :string
     end
 
-    BOOLEAN_FIELDS.each do |field|
-      attribute field, :boolean
-    end
-
-    DATE_FIELDS.each do |field|
-      attribute field, :date
+    HASH_FIELDS.each do |field|
+      attribute field
     end
 
     FIELDS.each do |field|
@@ -50,24 +45,6 @@ module KB
                           end
 
         self
-      end
-    end
-
-    def destroyed?
-      @destroyed
-    end
-
-    def destroy!
-      return unless @persisted
-
-      self.class.destroy key
-      @destroyed = true
-      freeze
-    end
-
-    def contracts
-      self.class.kb_client.request("#{key}/contracts").map do |contract|
-        PetContract.from_api(contract)
       end
     end
   end

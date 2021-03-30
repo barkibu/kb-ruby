@@ -21,10 +21,12 @@ RSpec.describe KB::ClientResolver do
   end
 
   %i[
-    consultation
-    pet_parent
-    pet
     breed
+    consultation
+    pet
+    pet_parent
+    pet_contract
+    plan
   ].each do |resource|
     it "responds to #{resource}" do
       expect(described_class).to respond_to resource

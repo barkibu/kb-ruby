@@ -1,11 +1,14 @@
 module KB
-  class Pet < BaseModel
+  class PetContract < BaseModel
     include Findable
+    include Creatable
     include Updatable
-    include FindOrCreatable
-    include Destroyable
 
-    kb_api :pet
+    kb_api :pet_contract
+
+    def self.find_by_contract_number(contract_number)
+      find("contractnumber/#{contract_number}")
+    end
 
     def self.attributes_from_response(response)
       response.transform_keys(&:underscore).transform_keys(&:to_sym).slice(*FIELDS)
@@ -13,10 +16,12 @@ module KB
 
     private_class_method :attributes_from_response
 
-    STRING_FIELDS = %i[key pet_parent_key name age_category sex breed chip species].freeze
-    DATE_FIELDS = %i[birth_date deleted_at].freeze
-    BOOLEAN_FIELDS = %i[neutered mongrel].freeze
-    FIELDS = [*STRING_FIELDS, *DATE_FIELDS, *BOOLEAN_FIELDS].freeze
+    STRING_FIELDS = %i[key plan_key pet_key contract_number contract_document status source].freeze
+    DATE_FIELDS = %i[policy_start_date policy_expiration_date].freeze
+    INTEGER_FIELDS = %i[price_yearly price_monthly].freeze
+    FIELDS = [*STRING_FIELDS, *DATE_FIELDS, *INTEGER_FIELDS].freeze
+
+    IMMUTABLE_FIELDS = (FIELDS - %i[status contract_document policy_expiration_date]).freeze
 
     define_attribute_methods(*FIELDS)
 
@@ -24,16 +29,18 @@ module KB
       attribute field, :string
     end
 
-    BOOLEAN_FIELDS.each do |field|
-      attribute field, :boolean
-    end
-
     DATE_FIELDS.each do |field|
       attribute field, :date
     end
 
+    INTEGER_FIELDS.each do |field|
+      attribute field, :integer
+    end
+
     FIELDS.each do |field|
       define_method :"#{field}=" do |value|
+        return if persisted? && IMMUTABLE_FIELDS.include?(field)
+
         public_send "#{field}_will_change!"
         super(value)
       end
@@ -53,22 +60,12 @@ module KB
       end
     end
 
-    def destroyed?
-      @destroyed
+    def plan
+      @plan ||= Plan.all.select { |plan| plan.key == plan_key }
     end
 
-    def destroy!
-      return unless @persisted
-
-      self.class.destroy key
-      @destroyed = true
-      freeze
-    end
-
-    def contracts
-      self.class.kb_client.request("#{key}/contracts").map do |contract|
-        PetContract.from_api(contract)
-      end
+    def pet
+      @pet ||= Pet.find(pet_key)
     end
   end
 end

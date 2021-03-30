@@ -42,11 +42,11 @@ The configuration of the connection to the Knowledge Base is done using ENV vari
   - arg: `key` string
   - returns: a PetParent instance when provided an existing key or raise `ActiveRecord::RecordNotFound`
 - `create`
-  - arg: `attributes` to initialize the entity 
+  - arg: `attributes` to initialize the entity
   - returns: the raw attributes of the created PetParent instance
   - throws an `KB::Error` exception if something went wrong
 - `find_or_create_by`
-  - arg: `attributes`, `additional_attributes` to look for or initialize the entity 
+  - arg: `attributes`, `additional_attributes` to look for or initialize the entity
   - returns: look for a PetParent matching the passed attributes or initialize and persist one with the given attributes and launching the block provided
   - throws an `KB::Error` exception if something went wrong
 - `all`
@@ -58,7 +58,8 @@ The configuration of the connection to the Knowledge Base is done using ENV vari
 - `destroy!`
   - deletes the entity in the Knowledge Base
   - throws a `KB::Error` exception if something went wrong
-
+- `contracts`
+  - returns all the KB::PetContract associated with this pet parent
 
 #### Assessment 📄
 
@@ -87,11 +88,11 @@ The configuration of the connection to the Knowledge Base is done using ENV vari
   - arg: `filters` hash of filters
   - returns: an array of Pet instances matching the filters
 - `create`
-  - arg: `attributes` to initialize the entity 
+  - arg: `attributes` to initialize the entity
   - returns: the raw attributes of the Pet instance
   - throws an `KB::Error` exception if something went wrong
 - `find_or_create_by`
-  - arg: `attributes`, `additional_attributes` to look for or initialize the entity 
+  - arg: `attributes`, `additional_attributes` to look for or initialize the entity
   - returns: look for a Pet matching the passed attributes or initialize and persist one with the given attributes and launching the block provided
   - throws an `KB::Error` exception if something went wrong
 - `save!`
@@ -100,7 +101,36 @@ The configuration of the connection to the Knowledge Base is done using ENV vari
 - `destroy!`
   - deletes the entity in the Knowledge Base
   - throws a `KB::Error` exception if something went wrong
-  
+- `contracts`
+  - returns all the KB::PetContract associated with this pet
+
+#### PetContract 📝
+
+`KB::PetContract` represents a resource exposing:
+
+- `find`
+  - arg: `key` the key of the contract in the Knowledge Base
+  - returns the contract with the matching key
+  - throws an `KB::Error` or `KB::ResourceNotFound` exception if something went wrong
+- `find_by_contract_number`
+  - arg: `contract_number` the contract number to find
+  - returns the identified KB::PetContract
+  - throws an `KB::Error` or `KB::ResourceNotFound` exception if something went wrong
+- `create`
+  - arg: `attributes` to initialize the entity
+  - returns: the raw attributes of the PetContract instance
+  - throws an `KB::Error` exception if something went wrong
+- `save!`
+  - persists (create or update) the entity to the Knowledge Base
+  - throws an `KB::Error` exception if something went wrong
+
+#### Plan 🗺
+
+`KB::Plan` represents a resource exposing:
+
+- `all`
+  - returns: the array of available plans
+
 #### Breed
 
 ```
@@ -124,7 +154,8 @@ The configuration of the connection to the Knowledge Base is done using ENV vari
 The `KB::Concerns::AsKBWrapper` concern has been created in order to easily make an ActiveRecord model wrap a KB model.
 
 To use it:
-- include it into your wrapping model, define an attribute `kb_key` on your wrapping model 
+
+- include it into your wrapping model, define an attribute `kb_key` on your wrapping model
 - call `wrap_kb` with the wrapped KB model class (available option: `skip_callback`)
 
 You have then access to the wrapped model under `kb_model` and can delegate attributes to it, for instance:

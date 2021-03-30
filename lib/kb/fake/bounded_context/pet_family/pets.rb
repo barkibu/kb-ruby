@@ -37,6 +37,12 @@ module BoundedContext
 
           json_response 200, updated_resource
         end
+
+        get '/v1/pets/:key/contracts' do
+          contracts = resource_state(:petcontracts).select { |contract| contract['petKey'] == params['key'] }
+
+          json_response 200, contracts
+        end
       end
 
       def stage(birthdate, species)

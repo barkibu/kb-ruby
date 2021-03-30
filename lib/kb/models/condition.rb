@@ -1,6 +1,5 @@
 module KB
   class Condition
-    # include TranslationOverridable
     include Inspectionable
     include ActiveModel::Model
     include ActiveModel::Attributes
@@ -22,11 +21,7 @@ module KB
     attribute :first_aid, :string
     attribute :predisposition_factors, :string
 
-    # translatable_attributes :name, :article, :description_short, :diagnosis, :treatment,
-    #                         :prevention, :first_aid, :predisposition_factors
-
     alias_attribute :information, :article
-    # translatable_attributes :information
 
     def urgent
       return false if urgency == 'low'
