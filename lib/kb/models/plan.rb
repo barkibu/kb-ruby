@@ -12,12 +12,12 @@ module KB
 
     STRING_FIELDS = %i[key description name type].freeze
     HASH_FIELDS = %i[benefits price].freeze
-    FIELDS = [*STRING_FIELDS, *HASH_FIELDS, :plan_life, :purchasable].freeze
+    FIELDS = [*STRING_FIELDS, *HASH_FIELDS, :plan_life_in_months, :buyable].freeze
 
     define_attribute_methods(*FIELDS)
 
-    attribute :plan_life, :integer
-    attribute :purchasable, :boolean
+    attribute :plan_life_in_months, :integer
+    attribute :buyable, :boolean
 
     STRING_FIELDS.each do |field|
       attribute field, :string
