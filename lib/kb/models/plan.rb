@@ -10,7 +10,7 @@ module KB
 
     private_class_method :attributes_from_response
 
-    STRING_FIELDS = %i[key description name type].freeze
+    STRING_FIELDS = %i[key description plan_name type].freeze
     HASH_FIELDS = %i[benefits price].freeze
     FIELDS = [*STRING_FIELDS, *HASH_FIELDS, :plan_life_in_months, :buyable].freeze
 
