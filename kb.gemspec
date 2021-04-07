@@ -36,6 +36,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 2.6'
 
+  spec.add_dependency 'dry-configurable', '~> 0.9'
   spec.add_development_dependency 'bundler', '~> 1.17'
   spec.add_development_dependency 'byebug'
   spec.add_development_dependency 'rake', '>= 12.3.3'

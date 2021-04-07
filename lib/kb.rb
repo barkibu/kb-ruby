@@ -6,8 +6,12 @@ require 'active_support/core_ext/array'
 require 'faraday'
 require 'faraday_middleware'
 require 'faraday/http'
+require 'dry/configurable'
 
 module KB
+  extend Dry::Configurable
+
+  setting :log_level, :info
 end
 
 require 'kb/inflections'

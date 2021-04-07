@@ -56,8 +56,10 @@ module KB
       @connection ||= Faraday.new(url: base_url, headers: headers) do |conn|
         conn.response :json
         conn.response :raise_error
-        conn.response :logger do |logger|
-          logger.filter(/(X-api-key:\s)("\w+")/, '\1[API_KEY_SCRUBBED]')
+        if KB.config.log_level == :debugger
+          conn.response :logger do |logger|
+            logger.filter(/(X-api-key:\s)("\w+")/, '\1[API_KEY_SCRUBBED]')
+          end
         end
         conn.adapter :http
       end
