@@ -11,6 +11,11 @@ require 'dry/configurable'
 module KB
   extend Dry::Configurable
 
+  setting :cache do
+    setting :instance, ActiveSupport::Cache::NullStore.new
+    setting :expires_in, 0
+  end
+
   setting :log_level, :info
 end
 

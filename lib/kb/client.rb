@@ -12,13 +12,19 @@ module KB
     end
 
     def all(filters = {})
-      connection.get('', attributes_case_transform(filters)).body
+      cache_key = "#{@base_url}/#{filters.sort.to_h}"
+
+      KB.config.cache.instance.fetch(cache_key, expires_in: KB.config.cache.expires_in) do
+        connection.get('', attributes_case_transform(filters)).body
+      end
     end
 
     def find(key, params = {})
       raise Faraday::ResourceNotFound, {} if key.blank?
 
-      connection.get(key, attributes_case_transform(params)).body
+      KB.config.cache.instance.fetch("#{@base_url}/#{key}", expires_in: KB.config.cache.expires_in.to_f) do
+        connection.get(key, attributes_case_transform(params)).body
+      end
     end
 
     def create(attributes)
