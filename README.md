@@ -32,6 +32,16 @@ The configuration of the connection to the Knowledge Base is done using ENV vari
 
   For instance: `https://dev.api.%{bounded_context}.barkkb.com/%{version}/%{entity}`.
 
+#### Cache configuration
+
+We add the ability to cache GET responses. To enable it, just set KB.config.cache properties:
+```ruby
+# config/initializers/kb_ruby.rb
+KB.config.cache.instance = Rails.cache # ActiveSupport::Cache::NullStore.new
+KB.config.cache.expires_in = 1.second # 0 by default
+KB.config.log_level = :debugger # :info by default
+```
+
 ### Exposed Entities
 
 #### Pet Parent 🧍🏾
