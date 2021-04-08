@@ -12,13 +12,19 @@ module KB
     end
 
     def all(filters = {})
-      connection.get('', attributes_case_transform(filters)).body
+      cache_key = "#{@base_url}/#{filters.sort.to_h}"
+
+      KB::Cache.fetch(cache_key) do
+        connection.get('', attributes_case_transform(filters)).body
+      end
     end
 
     def find(key, params = {})
       raise Faraday::ResourceNotFound, {} if key.blank?
 
-      connection.get(key, attributes_case_transform(params)).body
+      KB::Cache.fetch("#{@base_url}/#{key}") do
+        connection.get(key, attributes_case_transform(params)).body
+      end
     end
 
     def create(attributes)
@@ -26,10 +32,12 @@ module KB
     end
 
     def update(key, attributes)
+      KB::Cache.delete("#{@base_url}/#{key}")
       connection.patch(key.to_s, attributes_to_json(attributes)).body
     end
 
     def destroy(key)
+      KB::Cache.delete("#{@base_url}/#{key}")
       connection.delete(key.to_s).body
     end
 
@@ -56,8 +64,10 @@ module KB
       @connection ||= Faraday.new(url: base_url, headers: headers) do |conn|
         conn.response :json
         conn.response :raise_error
-        conn.response :logger do |logger|
-          logger.filter(/(X-api-key:\s)("\w+")/, '\1[API_KEY_SCRUBBED]')
+        if KB.config.log_level == :debugger
+          conn.response :logger do |logger|
+            logger.filter(/(X-api-key:\s)("\w+")/, '\1[API_KEY_SCRUBBED]')
+          end
         end
         conn.adapter :http
       end

@@ -6,12 +6,22 @@ require 'active_support/core_ext/array'
 require 'faraday'
 require 'faraday_middleware'
 require 'faraday/http'
+require 'dry/configurable'
 
 module KB
+  extend Dry::Configurable
+
+  setting :cache do
+    setting :instance, ActiveSupport::Cache::NullStore.new
+    setting :expires_in, 0
+  end
+
+  setting :log_level, :info
 end
 
 require 'kb/inflections'
 
+require 'kb/cache'
 require 'kb/client_resolver'
 require 'kb/error'
 require 'kb/client'
