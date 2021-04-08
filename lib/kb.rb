@@ -21,6 +21,7 @@ end
 
 require 'kb/inflections'
 
+require 'kb/cache'
 require 'kb/client_resolver'
 require 'kb/error'
 require 'kb/client'

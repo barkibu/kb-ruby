@@ -14,7 +14,7 @@ module KB
     def all(filters = {})
       cache_key = "#{@base_url}/#{filters.sort.to_h}"
 
-      KB.config.cache.instance.fetch(cache_key, expires_in: KB.config.cache.expires_in.to_f) do
+      KB::Cache.fetch(cache_key) do
         connection.get('', attributes_case_transform(filters)).body
       end
     end
@@ -22,7 +22,7 @@ module KB
     def find(key, params = {})
       raise Faraday::ResourceNotFound, {} if key.blank?
 
-      KB.config.cache.instance.fetch("#{@base_url}/#{key}", expires_in: KB.config.cache.expires_in.to_f) do
+      KB::Cache.fetch("#{@base_url}/#{key}") do
         connection.get(key, attributes_case_transform(params)).body
       end
     end
@@ -32,12 +32,12 @@ module KB
     end
 
     def update(key, attributes)
-      KB.config.cache.instance.delete("#{@base_url}/#{key}")
+      KB::Cache.delete("#{@base_url}/#{key}")
       connection.patch(key.to_s, attributes_to_json(attributes)).body
     end
 
     def destroy(key)
-      KB.config.cache.instance.delete("#{@base_url}/#{key}")
+      KB::Cache.delete("#{@base_url}/#{key}")
       connection.delete(key.to_s).body
     end
 
