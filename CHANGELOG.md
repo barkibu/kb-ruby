@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add Dry gem and setup config
 - Add cache as gem config settings
 - Add log level as gem config settings
+- Improve KB Exceptions definitions
 
 ## [0.3.4]
 - Fix planName attributes wrongly named on Plan
