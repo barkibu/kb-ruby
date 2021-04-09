@@ -8,6 +8,12 @@ module KB
       @body = body
       set_backtrace error.backtrace if error
     end
+
+    def message
+      error_msg = "Received Status: #{status_code}\n"
+      error_msg << body
+      error_msg
+    end
   end
 
   class ResourceNotFound < Error; end
