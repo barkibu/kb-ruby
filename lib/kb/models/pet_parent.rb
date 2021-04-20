@@ -3,6 +3,7 @@ module KB
     include Findable
     include Updatable
     include FindOrCreatable
+    include Upsertable
     include Destroyable
 
     kb_api :pet_parent
@@ -13,6 +14,11 @@ module KB
     end
 
     def self.create(attributes = {})
+      attributes[:partner_key] = ENV['KB_PARTNER_KEY']
+      super(attributes)
+    end
+
+    def self.upsert(attributes)
       attributes[:partner_key] = ENV['KB_PARTNER_KEY']
       super(attributes)
     end

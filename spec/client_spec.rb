@@ -143,6 +143,43 @@ RSpec.describe KB::Client do
     end
   end
 
+  describe '#upsert' do
+    subject(:upsert) { client.upsert(attributes) }
+
+    let(:api_response) { [200, { 'Content-Type': 'application/json' }, upserted_entity.to_json] }
+    let(:api_error) { [422, {}, 'Invalid something'] }
+    let(:attributes) { { attribute_a: 'value 1', foo: 'bar' } }
+    let(:upserted_entity) { attributes.merge(key: 'key') }
+
+    it 'launches a PUT request' do
+      stubs.put(path) { |_env| api_response }
+      upsert
+      stubs.verify_stubbed_calls
+    end
+
+    it 'passes the authorization headers' do
+      stubs.put(path) do |env|
+        expect(env.request_headers).to include authorization_headers
+        api_response
+      end
+      upsert
+    end
+
+    context 'with a successful request' do
+      it 'returns the parsed json' do
+        stubs.put(path) { |_env| api_response }
+        expect(upsert).to eq(upserted_entity.with_indifferent_access)
+      end
+    end
+
+    context 'with a failing api request' do
+      it 'triggers an error' do
+        stubs.put(path) { |_env| api_error }
+        expect { upsert }.to raise_error Faraday::ClientError
+      end
+    end
+  end
+
   describe '#destroy' do
     subject(:destroy) { client.destroy(key) }
 
