@@ -46,6 +46,10 @@ module KB
       connection.delete(key.to_s).body
     end
 
+    def upsert(attributes)
+      connection.put('', attributes_to_json(attributes)).body
+    end
+
     private
 
     def headers
