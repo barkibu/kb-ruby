@@ -113,6 +113,9 @@ KB.config.log_level = :debugger # :info by default
   - throws a `KB::Error` exception if something went wrong
 - `contracts`
   - returns all the KB::PetContract associated with this pet
+- `upsert`
+  - updates KB:Pet if exists a Pet with same name for its PetParent
+  - creates a new KB:Pet if not exists a Pet with same name for its PetParent 
 
 #### PetContract 📝
 
