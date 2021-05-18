@@ -12,3 +12,7 @@
 
 # SimpleCov
 /coverage
+
+# Byebugs
+.byebug_history
+
