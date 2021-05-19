@@ -4,6 +4,7 @@ module KB
     include Updatable
     include FindOrCreatable
     include Destroyable
+    include Upsertable
 
     kb_api :pet
 

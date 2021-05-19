@@ -1,6 +1,5 @@
 require 'spec_helper'
 require 'kb-fake'
-require 'byebug'
 
 RSpec.describe KB::PetParent do
   around do |example|

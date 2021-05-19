@@ -1,5 +1,6 @@
 require 'kb/fake/bounded_context/rest_resource'
 require 'date'
+# rubocop:disable Metrics/BlockLength
 
 module BoundedContext
   module PetFamily
@@ -43,6 +44,26 @@ module BoundedContext
 
           json_response 200, contracts
         end
+
+        put '/v1/pets' do
+          params = JSON.parse(request.body.read)
+          pet_parent = find_resource(:petparents, params['petParentKey'])
+
+          return json_response 422, {} if pet_parent.nil?
+
+          potential_matches = filter_resources(:pets, params.slice('name', 'petParentKey'))
+          existing_pet = (potential_matches.first if potential_matches.count == 1)
+
+          resource = (existing_pet || { 'key' => SecureRandom.uuid }).merge params
+
+          if existing_pet.present?
+            update_resource_state(:pets, resource)
+          else
+            resource_state(:pets) << resource
+          end
+
+          json_response 200, resource
+        end
       end
 
       def stage(birthdate, species)
@@ -60,3 +81,4 @@ module BoundedContext
     end
   end
 end
+# rubocop:enable Metrics/BlockLength
