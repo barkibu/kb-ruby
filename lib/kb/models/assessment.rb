@@ -38,7 +38,7 @@ module KB
     attribute :conditions, :array_of_conditions
     attribute :symptoms, :array_of_symptoms
 
-    attribute :date, :date
+    attribute :date, :datetime
     attribute :finished, :boolean, default: false
 
     attribute :urgency, :string
