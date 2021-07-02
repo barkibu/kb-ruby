@@ -27,28 +27,13 @@ module KB
 
     private_class_method :attributes_from_response
 
-    STRING_FIELDS = %i[key breed_parent_key weight_group species].freeze
-    INTEGER_FIELDS = %i[risk].freeze
-    DECIMAL_FIELDS = %i[weight_min weight_max lifespan].freeze
-    ARRAY_FIELDS = %i[names].freeze
-    FIELDS = [*STRING_FIELDS, *INTEGER_FIELDS, *DECIMAL_FIELDS, *ARRAY_FIELDS].freeze
+    STRING_FIELDS = %i[key locale name species weight_group].freeze
+    FIELDS = [*STRING_FIELDS].freeze
 
     define_attribute_methods(*FIELDS)
 
     STRING_FIELDS.each do |field|
       attribute field, :string
-    end
-
-    INTEGER_FIELDS.each do |field|
-      attribute field, :integer
-    end
-
-    DECIMAL_FIELDS.each do |field|
-      attribute field, :decimal
-    end
-
-    ARRAY_FIELDS.each do |field|
-      attribute field, :array_of_strings, default: []
     end
 
     FIELDS.each do |field|
