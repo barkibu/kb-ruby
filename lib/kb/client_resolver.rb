@@ -18,7 +18,7 @@ module KB
       end
 
       def breed
-        call '', :breeds
+        call :petfamily, :breeds
       end
 
       def plan
