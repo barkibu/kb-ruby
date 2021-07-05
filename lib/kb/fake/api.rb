@@ -1,3 +1,4 @@
+require 'kb/fake/bounded_context/pet_family/breeds'
 require 'kb/fake/bounded_context/pet_family/pet_parents'
 require 'kb/fake/bounded_context/pet_family/pets'
 require 'kb/fake/bounded_context/pet_family/pet_contracts'
@@ -5,14 +6,15 @@ require 'kb/fake/bounded_context/pet_family/pet_contracts'
 module KB
   module Fake
     class ApiState
-      attr_accessor :petparents, :pets, :consultations, :petcontracts, :plans
+      attr_accessor :petparents, :pets, :consultations, :petcontracts, :plans, :breeds
 
-      def initialize(petparents: [], pets: [], consultations: [], petcontracts: [], plans: [])
+      def initialize(petparents: [], pets: [], consultations: [], petcontracts: [], plans: [], breeds: []) # rubocop:disable Metrics/ParameterLists
         @petparents = petparents
         @pets = pets
         @consultations = consultations
         @petcontracts = petcontracts
         @plans = plans
+        @breeds = breeds
       end
 
       def to_snapshot
@@ -21,12 +23,14 @@ module KB
           petparents: @petparents.clone,
           consultations: @consultations.clone,
           petcontracts: @petcontracts.clone,
-          plans: @plans.clone
+          plans: @plans.clone,
+          breeds: @breeds.clone
         }
       end
     end
 
     class Api < Sinatra::Base
+      include BoundedContext::PetFamily::Breeds
       include BoundedContext::PetFamily::Pets
       include BoundedContext::PetFamily::PetParents
       include BoundedContext::PetFamily::PetContracts
