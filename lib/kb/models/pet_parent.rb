@@ -29,8 +29,9 @@ module KB
 
     private_class_method :attributes_from_response
 
-    STRING_FIELDS = %i[key partner_key first_name last_name prefix_phone_number phone_number email].freeze
-    DATE_FIELDS = %i[deleted_at].freeze
+    STRING_FIELDS = %i[ key partner_name first_name last_name prefix_phone_number
+                        phone_number email country address zip_code nif].freeze
+    DATE_FIELDS = %i[birth_date deleted_at].freeze
     FIELDS = [*STRING_FIELDS, *DATE_FIELDS].freeze
 
     define_attribute_methods(*FIELDS)
