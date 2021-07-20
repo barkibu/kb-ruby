@@ -27,7 +27,7 @@ module KB
 
     private_class_method :attributes_from_response
 
-    STRING_FIELDS = %i[key locale name species weight_group].freeze
+    STRING_FIELDS = %i[key locale name species weight_group external_id].freeze
     FIELDS = [*STRING_FIELDS].freeze
 
     define_attribute_methods(*FIELDS)
