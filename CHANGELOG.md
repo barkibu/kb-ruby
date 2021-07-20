@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.7]
+- Breed - Add external_id field
+
 ## [0.4.6]
 - PetParent - Add more KB fields
 
@@ -82,7 +85,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.1] - 2020-01-12
 - Init Version: Breeds and limited PetParents/Consultations
 
-[Unreleased]: https://github.com/barkibu/kb-ruby/compare/v0.4.5...HEAD
+[Unreleased]: https://github.com/barkibu/kb-ruby/compare/v0.4.6...HEAD
+[0.4.6]: https://github.com/barkibu/kb-ruby/compare/v0.4.5...v0.4.6
 [0.4.5]: https://github.com/barkibu/kb-ruby/compare/v0.4.4...v0.4.5
 [0.4.4]: https://github.com/barkibu/kb-ruby/compare/v0.4.3...v0.4.4
 [0.4.3]: https://github.com/barkibu/kb-ruby/compare/v0.4.2...v0.4.3
