@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    kb (0.4.6)
+    kb (0.4.7)
       activemodel (>= 4.0.2)
       activerecord
       activesupport (>= 3.0.0)
@@ -10,9 +10,9 @@ PATH
       faraday-http
       faraday_middleware
       i18n
-    kb-fake (0.4.6)
+    kb-fake (0.4.7)
       activesupport (>= 3.0.0)
-      kb (= 0.4.6)
+      kb (= 0.4.7)
       sinatra
       webmock
 
@@ -128,7 +128,7 @@ GEM
       rubocop (~> 1.0)
       rubocop-ast (>= 1.1.0)
     ruby-progressbar (1.11.0)
-    ruby2_keywords (0.0.4)
+    ruby2_keywords (0.0.5)
     simplecov (0.21.2)
       docile (~> 1.1)
       simplecov-html (~> 0.11)
