@@ -11,7 +11,7 @@ module KB
 
     def message
       error_msg = "Received Status: #{status_code}\n"
-      error_msg << body
+      error_msg << body.to_s
       error_msg
     end
   end
