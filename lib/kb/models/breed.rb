@@ -35,12 +35,5 @@ module KB
     STRING_FIELDS.each do |field|
       attribute field, :string
     end
-
-    FIELDS.each do |field|
-      define_method :"#{field}=" do |value|
-        public_send "#{field}_will_change!"
-        super(value)
-      end
-    end
   end
 end

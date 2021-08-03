@@ -37,15 +37,6 @@ module KB
       attribute field, :integer
     end
 
-    FIELDS.each do |field|
-      define_method :"#{field}=" do |value|
-        return if persisted? && IMMUTABLE_FIELDS.include?(field)
-
-        public_send "#{field}_will_change!"
-        super(value)
-      end
-    end
-
     def save!
       return unless changed?
 
