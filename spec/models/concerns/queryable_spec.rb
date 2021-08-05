@@ -41,4 +41,16 @@ RSpec.describe KB::Queryable do
       expect(exposed_kb_client).to be kb_client
     end
   end
+
+  describe '#from_api' do
+    subject(:from_api) { valid_class.from_api(attributes) }
+
+    it 'returns a persited instance' do
+      expect(from_api).to be_persisted
+    end
+
+    it 'returns an instance with no previous changes' do
+      expect(from_api.previous_changes).to be_empty
+    end
+  end
 end

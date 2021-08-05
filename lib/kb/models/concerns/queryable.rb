@@ -17,7 +17,7 @@ module KB
       end
 
       def from_api(attributes)
-        new attributes_from_response(attributes), &:persist!
+        new(attributes_from_response(attributes), &:persist!).tap(&:clear_changes_information)
       end
 
       private
