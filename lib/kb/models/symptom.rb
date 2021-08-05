@@ -1,6 +1,5 @@
 module KB
   class Symptom
-    # include TranslationOverridable
     include Inspectionable
     include ActiveModel::Model
     include ActiveModel::Attributes
@@ -15,10 +14,7 @@ module KB
     attribute :urgency, :string
     attribute :article, :string, default: ''
 
-    # translatable_attributes :name, :article
-
     alias_attribute :information, :article
-    # translatable_attributes :information
 
     def urgent
       return false if urgency == 'low'
