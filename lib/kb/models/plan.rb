@@ -27,13 +27,6 @@ module KB
       attribute field
     end
 
-    FIELDS.each do |field|
-      define_method :"#{field}=" do |value|
-        public_send "#{field}_will_change!"
-        super(value)
-      end
-    end
-
     def save!
       return unless changed?
 

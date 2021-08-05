@@ -25,5 +25,16 @@ module KB
       changes_applied
       @persisted = true
     end
+
+    def self.define_attribute_methods(*fields)
+      super
+      fields.each do |field|
+        define_method :"#{field}=" do |value|
+          super(value).tap do
+            public_send "#{field}_will_change!" if public_send("#{field}_changed?")
+          end
+        end
+      end
+    end
   end
 end
