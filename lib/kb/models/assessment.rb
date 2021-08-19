@@ -14,6 +14,7 @@ module KB
 
       def all(filters = {})
         filters[:locale] ||= I18n.locale
+        filters[:pet_key] = filters[:user] if filters[:user].present?
         super(filters)
       end
 

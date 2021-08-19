@@ -13,7 +13,7 @@ RSpec.describe KB::Assessment do
     Faraday::Adapter::Test::Stubs.new
   end
   let(:resources) { [{ 'my' => 'first_resource' }, { 'my' => 'second_resource' }] }
-  let(:resource_path) { '/v2/consultations' }
+  let(:resource_path) { '/v1/consultations' }
 
   describe '#all' do
     subject(:all) { described_class.all(filters) }
@@ -29,7 +29,7 @@ RSpec.describe KB::Assessment do
 
     let(:api_response) { [200, { 'Content-Type': 'application/json' }, resources.first] }
     let(:key) { 'bar' }
-    let(:resource_path) { '/v2/consultations/bar' }
+    let(:resource_path) { '/v1/consultations/bar' }
 
     it_behaves_like 'Localizable Request'
   end
