@@ -53,7 +53,7 @@ module KB
         Api.state.send("#{name}=", value)
       end
 
-      resource :consultations, version: 'v2', except: %i[create update destroy]
+      resource :consultations, except: %i[create update destroy]
 
       resource :plans, except: %i[show create update destroy]
     end
