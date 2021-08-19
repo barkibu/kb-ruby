@@ -2,7 +2,7 @@ module KB
   class ClientResolver
     class << self
       def consultation
-        call '', :consultations, :v2
+        call :petfamily, :consultations, :v1
       end
 
       def pet_parent
