@@ -19,7 +19,7 @@ module KB
     STRING_FIELDS = %i[key plan_key pet_key contract_number contract_document status
                        source affiliate_online affiliate_offline].freeze
     DATE_FIELDS = %i[policy_start_date policy_expiration_date].freeze
-    INTEGER_FIELDS = %i[price_yearly price_monthly].freeze
+    INTEGER_FIELDS = %i[price_yearly price_monthly price_discount_yearly].freeze
     FIELDS = [*STRING_FIELDS, *DATE_FIELDS, *INTEGER_FIELDS].freeze
 
     IMMUTABLE_FIELDS = (FIELDS - %i[status contract_document policy_expiration_date]).freeze
