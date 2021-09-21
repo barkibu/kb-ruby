@@ -21,7 +21,23 @@ module BoundedContext
         json_response 200, filter_resources(name, params)
       end
 
-      def filter_resources(name, filters)
+      def filter_resources(name, filters, rest_method = nil)
+        if rest_method == :upsert
+          resources = []
+          resources = select_resources(name, filters.slice('key')) if filters.key? 'key'
+          if resources.empty? && filters.key?('phoneNumber')
+            resources = select_resources(name,
+                                         filters.slice('phoneNumber',
+                                                       'prefixPhoneNumber'))
+          end
+          resources = select_resources(name, filters.slice('email')) if resources.empty? && filters.key?('email')
+          return resources if resources.present?
+        end
+
+        select_resources(name, filters)
+      end
+
+      def select_resources(name, filters)
         resource_state(name).select do |item|
           item[:deleted_at].blank? && filters.slice(*filterable_attributes(name)).reduce(true) do |sum, (key, value)|
             sum && (value.blank? \

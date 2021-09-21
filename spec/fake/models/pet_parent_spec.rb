@@ -13,7 +13,7 @@ RSpec.describe KB::PetParent do
     subject(:upserted_pet_parent) { described_class.upsert(attributes.merge(first_name: first_name)) }
 
     let(:attributes) do
-      { phone_number: '683123123', prefix_phone_number: '+34' }
+      { phone_number: '683123123', prefix_phone_number: '+34', email: 'foo@example.com' }
     end
     let(:first_name) { 'JMJ' }
 
@@ -28,6 +28,24 @@ RSpec.describe KB::PetParent do
 
       it 'updates the entity with the provided properties' do
         expect(upserted_pet_parent.first_name).to eq(first_name)
+      end
+
+      context 'updating the phone number' do
+        subject(:upserted_pet_parent) { described_class.upsert(attributes.merge(phone_number: '680000000')) }
+
+        it 'raises an error' do
+          expect do
+            upserted_pet_parent
+          end.to raise_error(KB::UnprocessableEntityError, 'Phone number can not be overridden')
+        end
+      end
+
+      context 'updating the email' do
+        subject(:upserted_pet_parent) { described_class.upsert(attributes.merge(email: 'bar@example.com')) }
+
+        it 'raises an error' do
+          expect { upserted_pet_parent }.to raise_error(KB::UnprocessableEntityError, 'Email can not be overridden')
+        end
       end
     end
 

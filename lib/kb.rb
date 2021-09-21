@@ -24,6 +24,7 @@ require 'kb/inflections'
 require 'kb/cache'
 require 'kb/client_resolver'
 require 'kb/error'
+require 'kb/unprocessable_entity_error'
 require 'kb/client'
 
 require 'kb/concerns'
