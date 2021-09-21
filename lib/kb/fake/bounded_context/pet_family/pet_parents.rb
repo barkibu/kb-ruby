@@ -29,7 +29,8 @@ module BoundedContext
         put '/v1/petparents' do
           params = JSON.parse(request.body.read)
           potential_matches = filter_resources(:petparents,
-                                               params.slice('phoneNumber', 'prefixPhoneNumber', 'email', 'key'), :upsert)
+                                               params.slice('phoneNumber', 'prefixPhoneNumber', 'email', 'key'),
+                                               :upsert)
           existing_pet_parent = (potential_matches.first if potential_matches.count == 1)
 
           resource = (existing_pet_parent || { 'key' => SecureRandom.uuid }).merge params
@@ -59,11 +60,13 @@ module BoundedContext
 
         def same_email_but_different_phone_number?(previous, new)
           (previous['email'] == new['email']) &&
-            ((previous['phoneNumber'] != new['phoneNumber']) || (previous['prefixPhoneNumber'] != new['prefixPhoneNumber']))
+            ((previous['phoneNumber'] != new['phoneNumber']) ||
+             (previous['prefixPhoneNumber'] != new['prefixPhoneNumber']))
         end
 
         def same_phone_number_but_different_email?(previous, new)
-          (previous['phoneNumber'] == new['phoneNumber']) && (previous['prefixPhoneNumber'] == new['prefixPhoneNumber']) &&
+          (previous['phoneNumber'] == new['phoneNumber']) &&
+            (previous['prefixPhoneNumber'] == new['prefixPhoneNumber']) &&
             (previous['email'] != new['email'])
         end
       end

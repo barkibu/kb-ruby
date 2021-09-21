@@ -21,7 +21,7 @@ module BoundedContext
         json_response 200, filter_resources(name, params)
       end
 
-      def filter_resources(name, filters, rest_method = nil)
+      def filter_resources(name, filters, rest_method = nil) # rubocop:todo Metrics/CyclomaticComplexity
         if rest_method == :upsert
           resources = []
           resources = select_resources(name, filters.slice('key')) if filters.key? 'key'

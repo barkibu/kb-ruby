@@ -1,5 +1,3 @@
-# rubocop:disable RSpec/NestedGroups
-
 require 'spec_helper'
 require 'kb-fake'
 
@@ -65,4 +63,3 @@ RSpec.describe KB::Pet do
     end
   end
 end
-# rubocop:enable RSpec/NestedGroups

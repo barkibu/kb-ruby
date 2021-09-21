@@ -1,4 +1,4 @@
-# rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+# rubocop:disable Metrics/AbcSize
 shared_context 'with KB Models Queryable Concerns' do
   let(:kb_client) { instance_double 'KB::Client' }
   let(:api_exception) { StandardError.new 'An Exception' }
@@ -28,4 +28,4 @@ shared_context 'with KB Models Queryable Concerns' do
     including_class
   end
 end
-# rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+# rubocop:enable Metrics/AbcSize

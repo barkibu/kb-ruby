@@ -7,10 +7,10 @@ module KB
     end
 
     module ClassMethods
-      def upsert(attributes)
+      def upsert(attributes) # rubocop:todo Metrics/AbcSize
         from_api kb_client.upsert(attributes)
       rescue Faraday::Error => e
-        if e.response[:status] = 422
+        if e.response[:status] == 422
           begin
             json_body = JSON.parse(e.response[:body])
           rescue JSON::ParserError

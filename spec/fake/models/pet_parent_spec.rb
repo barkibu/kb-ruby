@@ -30,7 +30,7 @@ RSpec.describe KB::PetParent do
         expect(upserted_pet_parent.first_name).to eq(first_name)
       end
 
-      context 'updating the phone number' do
+      context 'when updating the phone number' do
         subject(:upserted_pet_parent) { described_class.upsert(attributes.merge(phone_number: '680000000')) }
 
         it 'raises an error' do
@@ -40,7 +40,7 @@ RSpec.describe KB::PetParent do
         end
       end
 
-      context 'updating the email' do
+      context 'when updating the email' do
         subject(:upserted_pet_parent) { described_class.upsert(attributes.merge(email: 'bar@example.com')) }
 
         it 'raises an error' do
