@@ -1,3 +1,4 @@
 module KB
-  class UnprocessableEntityError < StandardError; end
+  class UnprocessableEntityError < CustomError
+  end
 end
