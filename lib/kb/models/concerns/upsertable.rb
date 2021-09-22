@@ -7,22 +7,25 @@ module KB
     end
 
     module ClassMethods
-      def upsert(attributes) # rubocop:todo Metrics/AbcSize
+      def upsert(attributes)
         from_api kb_client.upsert(attributes)
       rescue Faraday::Error => e
-        if e.response[:status] == 422
-          begin
-            json_body = JSON.parse(e.response[:body])
-          rescue JSON::ParserError
-            json_body = ''
-          end
-
-          if json_body.is_a?(Hash) && json_body['error'] == 'Unprocessable Entity'
-            raise KB::UnprocessableEntityError, json_body['message']
-          end
-        end
+        raise_custom_errors(e.response[:body]) if [409, 422].include? e.response[:status]
 
         raise KB::Error.new(e.response[:status], e.response[:body], e)
+      end
+
+      def raise_custom_errors(body)
+        begin
+          json_body = JSON.parse(body)
+        rescue JSON::ParserError
+          json_body = ''
+        end
+
+        return unless json_body.is_a?(Hash)
+
+        raise KB::UnprocessableEntityError, json_body['message'] if json_body['error'] == 'Unprocessable Entity'
+        raise KB::ConflictError, json_body['message'] if json_body['error'] == 'Conflict'
       end
     end
   end
