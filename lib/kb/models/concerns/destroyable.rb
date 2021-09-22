@@ -9,8 +9,8 @@ module KB
     module ClassMethods
       def destroy(key)
         kb_client.destroy(key)
-      rescue Faraday::Error => e
-        raise KB::Error.new(e.response[:status], e.response[:body], e)
+      rescue Faraday::Error => error
+        raise KB::Error.from_faraday(error)
       end
     end
   end

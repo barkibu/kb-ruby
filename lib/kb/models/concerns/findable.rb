@@ -11,8 +11,8 @@ module KB
         from_api(kb_client.find(key, params))
       rescue Faraday::ResourceNotFound => e
         raise KB::ResourceNotFound.new(e.response[:status], e.response[:body], e)
-      rescue Faraday::Error => e
-        raise KB::Error.new(e.response[:status], e.response[:body], e)
+      rescue Faraday::Error => error
+        raise KB::Error.from_faraday(error)
       end
     end
   end

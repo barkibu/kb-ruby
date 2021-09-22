@@ -23,10 +23,7 @@ require 'kb/inflections'
 
 require 'kb/cache'
 require 'kb/client_resolver'
-require 'kb/error'
-require 'kb/custom_error'
-require 'kb/unprocessable_entity_error'
-require 'kb/conflict_error'
+require 'kb/errors'
 require 'kb/client'
 
 require 'kb/concerns'
