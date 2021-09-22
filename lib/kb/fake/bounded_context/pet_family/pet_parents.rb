@@ -28,11 +28,7 @@ module BoundedContext
 
         put '/v1/petparents' do
           params = JSON.parse(request.body.read)
-          potential_matches = filter_resources(:petparents,
-                                               params.slice('phoneNumber', 'prefixPhoneNumber', 'email', 'key'),
-                                               :upsert)
-          existing_pet_parent = (potential_matches.first if potential_matches.count == 1)
-
+          existing_pet_parent = pet_parent_by_key(params) || pet_parent_by_phone(params) || pet_parent_by_email(params)
           resource = (existing_pet_parent || { 'key' => SecureRandom.uuid }).merge params
 
           if existing_pet_parent.present?
@@ -53,6 +49,24 @@ module BoundedContext
         end
 
         private
+
+        def pet_parent_by_key(params)
+          resource_by_key(name, params['key']) if params['key']
+        end
+
+        def pet_parent_by_phone(params)
+          matches_by_phone = (if params['phoneNumber']
+                                filter_resources(:petparents,
+                                                 params.slice('phoneNumber',
+                                                              'prefixPhoneNumber'))
+                              end)
+          matches_by_phone.first if matches_by_phone&.count == 1
+        end
+
+        def pet_parent_by_email(params)
+          matches_by_email = (filter_resources(:petparents, params.slice('email')) if params['email'])
+          matches_by_email.first if matches_by_email&.count == 1
+        end
 
         def pets_by_pet_parent_key(key)
           resource_state(:pets).select { |pet| pet['petParentKey'] == key }
