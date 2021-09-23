@@ -12,7 +12,7 @@ module KB
       def find_or_create_by(attributes, additional_attributes)
         all(attributes).first || new(create(additional_attributes.merge(attributes)), &:persist!)
       rescue Faraday::Error => e
-        raise KB::Error.new(e.response[:status], e.response[:body], e)
+        raise KB::Error.from_faraday(e)
       end
     end
   end

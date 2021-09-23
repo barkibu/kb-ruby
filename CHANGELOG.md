@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0]
+- Add new Error classes
+- Emulate the same behavior on Pet Parent Upsert
+
 ## [0.6.0]
 - Add price_discount_yearly PetContract attribute
 
@@ -100,7 +104,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.1] - 2020-01-12
 - Init Version: Breeds and limited PetParents/Consultations
 
-[Unreleased]: https://github.com/barkibu/kb-ruby/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/barkibu/kb-ruby/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/barkibu/kb-ruby/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/barkibu/kb-ruby/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/barkibu/kb-ruby/compare/v0.4.10...v0.5.0
 [0.4.10]: https://github.com/barkibu/kb-ruby/compare/v0.4.9...v0.4.10

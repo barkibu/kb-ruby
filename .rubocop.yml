@@ -19,6 +19,7 @@ RSpec/FilePath:
   Enabled: false
 
 Metrics/BlockLength:
+  Max: 15
   Exclude:
     - 'spec/**/*.rb'
     - 'kb.gemspec'
@@ -33,3 +34,12 @@ Style/FrozenStringLiteralComment:
 
 Style/Documentation:
   Enabled: false
+
+RSpec/NestedGroups:
+  Max: 4
+
+Metrics/MethodLength:
+  Max: 15
+
+Metrics/ModuleLength:
+  Max: 110

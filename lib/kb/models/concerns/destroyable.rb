@@ -10,7 +10,7 @@ module KB
       def destroy(key)
         kb_client.destroy(key)
       rescue Faraday::Error => e
-        raise KB::Error.new(e.response[:status], e.response[:body], e)
+        raise KB::Error.from_faraday(e)
       end
     end
   end
