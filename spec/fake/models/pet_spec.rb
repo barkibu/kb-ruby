@@ -19,8 +19,8 @@ RSpec.describe KB::Pet do
     context 'when pet parent not exists' do
       let(:my_pet_parent_kb_uuid) { 'new_pet_parent_key' }
 
-      it 'raise a KB::Error with status 422' do
-        expect { upserted_pet }.to raise_error(an_instance_of(KB::Error).and(having_attributes({ status_code: 422 })))
+      it 'raises a KB::UnprocessableEntityError' do
+        expect { upserted_pet }.to raise_error(KB::UnprocessableEntityError)
       end
     end
 

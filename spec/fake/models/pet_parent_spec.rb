@@ -21,6 +21,9 @@ RSpec.describe KB::PetParent do
       before { existing_pet_parent }
 
       let(:existing_pet_parent) { described_class.create(attributes) }
+      let(:phone_attributes) do
+        { phone_number: '680000000', prefix_phone_number: '+34' }
+      end
 
       it 'return the existing PetParent' do
         expect(upserted_pet_parent.key).to eq(existing_pet_parent[:key])
@@ -30,13 +33,25 @@ RSpec.describe KB::PetParent do
         expect(upserted_pet_parent.first_name).to eq(first_name)
       end
 
-      context 'when updating the phone number' do
-        subject(:upserted_pet_parent) { described_class.upsert(attributes.merge(phone_number: '680000000')) }
+      context 'when updating with a non existent phone number' do
+        subject(:upserted_pet_parent) { described_class.upsert(attributes.merge(phone_attributes)) }
+
+        it 'updates the entity with the provided phone number' do
+          expect(upserted_pet_parent.phone_number).to eq(phone_attributes[:phone_number])
+        end
+      end
+
+      context 'when updating with an existent phone number' do
+        subject(:upserted_pet_parent) do
+          described_class.upsert(attributes.merge(phone_number: phone_attributes[:phone_number]))
+        end
+
+        before { other_pet_parent }
+
+        let(:other_pet_parent) { described_class.create(phone_attributes) }
 
         it 'raises an error' do
-          expect do
-            upserted_pet_parent
-          end.to raise_error(KB::UnprocessableEntityError, 'Phone number can not be overridden')
+          expect { upserted_pet_parent }.to raise_error(KB::ConflictError)
         end
       end
 
@@ -44,7 +59,7 @@ RSpec.describe KB::PetParent do
         subject(:upserted_pet_parent) { described_class.upsert(attributes.merge(email: 'bar@example.com')) }
 
         it 'raises an error' do
-          expect { upserted_pet_parent }.to raise_error(KB::UnprocessableEntityError, 'Email can not be overridden')
+          expect { upserted_pet_parent }.to raise_error(KB::UnprocessableEntityError)
         end
       end
     end

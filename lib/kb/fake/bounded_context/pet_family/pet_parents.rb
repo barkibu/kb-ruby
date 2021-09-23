@@ -28,7 +28,7 @@ module BoundedContext
 
         put '/v1/petparents' do
           params = JSON.parse(request.body.read)
-          existing_pet_parent = pet_parent_by_key(params) || pet_parent_by_phone(params) || pet_parent_by_email(params)
+          existing_pet_parent = pet_parent_by_key(params) || pet_parent_by_email(params) || pet_parent_by_phone(params)
           resource = (existing_pet_parent || { 'key' => SecureRandom.uuid }).merge params
 
           if existing_pet_parent.present?
@@ -37,7 +37,13 @@ module BoundedContext
             end
 
             if same_email_but_different_phone_number?(existing_pet_parent, params)
-              return json_response 422, { error: 'Unprocessable Entity', message: 'Phone number can not be overridden' }
+              previous_pet_parent_by_phone = pet_parent_by_phone(params)
+              if previous_pet_parent_by_phone.present?
+                return json_response 409,
+                                     { error: 'ConflictError',
+                                       message: 'Duplicated pet parent: same partner, phoneNumber \
+                                                and phoneNumberPrefix' }
+              end
             end
 
             update_resource_state(:petparents, resource)
@@ -51,7 +57,7 @@ module BoundedContext
         private
 
         def pet_parent_by_key(params)
-          resource_by_key(:petparents, params['key']) if params['key']
+          find_resource(:petparents, params['key']) if params['key']
         end
 
         def pet_parent_by_phone(params)
