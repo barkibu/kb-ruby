@@ -24,7 +24,7 @@ RSpec.describe KB::Findable do
       expect(including_class).to have_received(:attributes_from_response).with(found_entity)
     end
 
-    it 'calls new on the including class with the result of `attributes_from_response` ' do
+    it 'calls new on the including class with the result of `attributes_from_response`' do
       find
       expect(including_class).to have_received(:new).with(including_class.attributes_from_response(found_entity))
     end

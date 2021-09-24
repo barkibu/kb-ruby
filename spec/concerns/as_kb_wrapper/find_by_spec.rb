@@ -53,7 +53,7 @@ RSpec.describe KB::Concerns::AsKBWrapper do
         allow(model_class).to receive(:kb_find_by).with(params).and_return nil
       end
 
-      it 'raise an ActiveRecord::RecordNotFound  when kb_find_by returns nil' do
+      it 'raise an ActiveRecord::RecordNotFound when kb_find_by returns nil' do
         expect { kb_find_by! }.to raise_exception(ActiveRecord::RecordNotFound)
       end
     end
