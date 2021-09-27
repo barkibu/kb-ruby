@@ -12,11 +12,11 @@ module KB
   extend Dry::Configurable
 
   setting :cache do
-    setting :instance, ActiveSupport::Cache::NullStore.new
-    setting :expires_in, 0
+    setting :instance, default: ActiveSupport::Cache::NullStore.new
+    setting :expires_in, default: 0
   end
 
-  setting :log_level, :info
+  setting :log_level, default: :info
 end
 
 require 'kb/inflections'
