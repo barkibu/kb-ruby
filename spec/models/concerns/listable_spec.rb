@@ -27,7 +27,7 @@ RSpec.describe KB::Listable do
       end
     end
 
-    it 'calls new on the including class with the result of `attributes_from_response` ' do
+    it 'calls new on the including class with the result of `attributes_from_response`' do
       list
       found_entities.each do |found_entity|
         expect(including_class).to have_received(:new).with(including_class.attributes_from_response(found_entity))
