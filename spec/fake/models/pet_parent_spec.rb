@@ -62,6 +62,18 @@ RSpec.describe KB::PetParent do
           expect { upserted_pet_parent }.to raise_error(KB::UnprocessableEntityError)
         end
       end
+
+      context 'when updating an unrestricted field of a pet parent only specifying phone part of its identification' do
+        subject(:upserted_pet_parent) do
+          described_class.upsert(partial_identification_attributes.merge(last_name: 'Doe'))
+        end
+
+        let(:partial_identification_attributes) { attributes.tap { |atts| atts.delete(:email) } }
+
+        it 'updates the entity with the unrestricted field' do
+          expect(upserted_pet_parent.last_name).to eq('Doe')
+        end
+      end
     end
 
     context 'with an new phone pair' do
