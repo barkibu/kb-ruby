@@ -84,10 +84,12 @@ module BoundedContext
              (previous['prefixPhoneNumber'] != new['prefixPhoneNumber']))
         end
 
-        def same_phone_number_but_different_email?(previous, new)
-          (previous['phoneNumber'] == new['phoneNumber']) &&
-            (previous['prefixPhoneNumber'] == new['prefixPhoneNumber']) &&
-            (previous['email'] != new['email'])
+        def same_phone_number_but_different_email?(previous, new_resource)
+          return false unless new_resource.key?('email')
+
+          (previous['phoneNumber'] == new_resource['phoneNumber']) &&
+            (previous['prefixPhoneNumber'] == new_resource['prefixPhoneNumber']) &&
+            (previous['email'] != new_resource['email'])
         end
       end
     end
