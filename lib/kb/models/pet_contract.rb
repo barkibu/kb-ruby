@@ -17,7 +17,10 @@ module KB
     private_class_method :attributes_from_response
 
     STRING_FIELDS = %i[key plan_key pet_key contract_number contract_document status
-                       source affiliate_online affiliate_offline].freeze
+                       source affiliate_online affiliate_offline
+                       conversion_utm_adgroup conversion_utm_campaign
+                       conversion_utm_content conversion_utm_medium
+                       conversion_utm_source conversion_utm_term].freeze
     DATE_FIELDS = %i[policy_start_date policy_expiration_date].freeze
     INTEGER_FIELDS = %i[price_yearly price_monthly price_discount_yearly].freeze
     FIELDS = [*STRING_FIELDS, *DATE_FIELDS, *INTEGER_FIELDS].freeze
