@@ -1,20 +1,22 @@
 require 'kb/fake/bounded_context/pet_family/breeds'
 require 'kb/fake/bounded_context/pet_family/pet_parents'
 require 'kb/fake/bounded_context/pet_family/pets'
+require 'kb/fake/bounded_context/pet_family/products'
 require 'kb/fake/bounded_context/pet_family/pet_contracts'
 
 module KB
   module Fake
     class ApiState
-      attr_accessor :petparents, :pets, :consultations, :petcontracts, :plans, :breeds
+      attr_accessor :petparents, :pets, :consultations, :petcontracts, :plans, :breeds, :products
 
-      def initialize(petparents: [], pets: [], consultations: [], petcontracts: [], plans: [], breeds: []) # rubocop:disable Metrics/ParameterLists
+      def initialize(petparents: [], pets: [], consultations: [], petcontracts: [], plans: [], breeds: [], products: []) # rubocop:disable Metrics/ParameterLists
         @petparents = petparents
         @pets = pets
         @consultations = consultations
         @petcontracts = petcontracts
         @plans = plans
         @breeds = breeds
+        @products = products
       end
 
       def to_snapshot
@@ -24,7 +26,8 @@ module KB
           consultations: @consultations.clone,
           petcontracts: @petcontracts.clone,
           plans: @plans.clone,
-          breeds: @breeds.clone
+          breeds: @breeds.clone,
+          products: @products.clone
         }
       end
     end
@@ -34,6 +37,7 @@ module KB
       include BoundedContext::PetFamily::Pets
       include BoundedContext::PetFamily::PetParents
       include BoundedContext::PetFamily::PetContracts
+      include BoundedContext::PetFamily::Products
 
       set :state, ApiState.new
 
