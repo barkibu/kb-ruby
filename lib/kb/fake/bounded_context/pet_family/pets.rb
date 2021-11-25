@@ -17,16 +17,16 @@ module BoundedContext
           KB::Pet::FIELDS.map { |k| k.to_s.camelize(:lower) }
         end
 
-        def on_create_action(name, _version)
+        def on_pets_create(_version)
           resource = JSON.parse(request.body.read)
           resource['ageCategory'] = stage(resource['birthDate'], resource['species'])
           resource = resource.merge 'key' => SecureRandom.uuid
-          resource_state(name) << resource
+          resource_state(:pets) << resource
           json_response 201, resource
         end
 
-        def on_update_action(name, _version)
-          resource_to_update = find_resource name, params['key']
+        def on_pets_update(_version)
+          resource_to_update = find_resource :pets, params['key']
 
           return json_response 404, {} if resource_to_update.nil?
 
@@ -34,7 +34,7 @@ module BoundedContext
           partial_resource['ageCategory'] = stage(partial_resource['birthDate'], resource_to_update['species'])
           updated_resource = resource_to_update.merge partial_resource
 
-          update_resource_state(name, updated_resource)
+          update_resource_state(:pets, updated_resource)
 
           json_response 200, updated_resource
         end

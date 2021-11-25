@@ -17,7 +17,9 @@ module BoundedContext
         body body_content.to_json
       end
 
-      def on_index_action(name, _version)
+      def on_index_action(name, version)
+        return send("on_#{name}_index", version) if respond_to? "on_#{name}_index"
+
         json_response 200, filter_resources(name, params)
       end
 
@@ -34,18 +36,24 @@ module BoundedContext
         try("#{name}_filterable_attributes") || []
       end
 
-      def on_show_action(name, _version)
+      def on_show_action(name, version)
+        return send("on_#{name}_show", version) if respond_to? "on_#{name}_show"
+
         resource_by_key name, params['key']
       end
 
-      def on_create_action(name, _version)
+      def on_create_action(name, version)
+        return send("on_#{name}_create", version) if respond_to? "on_#{name}_create"
+
         resource = JSON.parse(request.body.read)
         resource = resource.merge 'key' => SecureRandom.uuid
         resource_state(name) << resource
         json_response 201, resource
       end
 
-      def on_update_action(name, _version)
+      def on_update_action(name, version)
+        return send("on_#{name}_update", version) if respond_to? "on_#{name}_update"
+
         resource_to_update = find_resource name, params['key']
 
         return json_response 404, {} if resource_to_update.nil?
@@ -58,7 +66,9 @@ module BoundedContext
         json_response 200, updated_resource
       end
 
-      def on_destroy_action(name, _version)
+      def on_destroy_action(name, version)
+        return send("on_#{name}_destroy", version) if respond_to? "on_#{name}_destroy"
+
         resource_to_delete = find_resource name, params['key']
         resource_to_delete[:deleted_at] = DateTime.now
 
