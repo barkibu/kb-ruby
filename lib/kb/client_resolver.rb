@@ -25,6 +25,10 @@ module KB
         call :petfamily, :plans
       end
 
+      def product
+        call :petfamily, :products
+      end
+
       def call(*args, &block)
         new(*args, &block).call
       end

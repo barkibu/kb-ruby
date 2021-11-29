@@ -40,6 +40,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rubocop'
   spec.add_development_dependency 'rubocop-rspec'
   spec.add_runtime_dependency 'activesupport', '>= 3.0.0'
+  spec.add_runtime_dependency 'countries'
   spec.add_runtime_dependency 'kb', KB::VERSION
   spec.add_runtime_dependency 'sinatra'
   spec.add_runtime_dependency 'webmock'
