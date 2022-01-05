@@ -16,7 +16,7 @@ module KB
     private_class_method :attributes_from_response
 
     STRING_FIELDS = %i[key country name type].freeze
-    STRING_ARRAY_FIELDS = %i[exclusions inclusions features].freeze
+    STRING_ARRAY_FIELDS = %i[exclusions inclusions features claimable_by languages].freeze
     FIELDS = [*STRING_FIELDS, *STRING_ARRAY_FIELDS, :purchasable].freeze
 
     define_attribute_methods(*FIELDS)
