@@ -16,7 +16,7 @@ module KB
 
     private_class_method :attributes_from_response
 
-    STRING_FIELDS = %i[key plan_key pet_key contract_number contract_document status
+    STRING_FIELDS = %i[key plan_key product_key pet_key contract_number contract_document status
                        source affiliate_online affiliate_offline
                        conversion_utm_adgroup conversion_utm_campaign
                        conversion_utm_content conversion_utm_medium
@@ -58,6 +58,10 @@ module KB
 
     def plan
       @plan ||= Plan.all.select { |plan| plan.key == plan_key }
+    end
+
+    def product
+      @product ||= Product.find product_key
     end
 
     def pet
