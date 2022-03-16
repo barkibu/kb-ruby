@@ -32,7 +32,8 @@ module KB
     STRING_FIELDS = %i[key partner_name first_name last_name prefix_phone_number
                        phone_number email country address zip_code nif].freeze
     DATE_FIELDS = %i[birth_date deleted_at].freeze
-    FIELDS = [*STRING_FIELDS, *DATE_FIELDS].freeze
+    BOOLEAN_FIELDS = %i[phone_number_verified email_verified].freeze
+    FIELDS = [*STRING_FIELDS, *DATE_FIELDS, *BOOLEAN_FIELDS].freeze
 
     define_attribute_methods(*FIELDS)
 
@@ -45,6 +46,10 @@ module KB
 
     DATE_FIELDS.each do |field|
       attribute field, :date
+    end
+
+    BOOLEAN_FIELDS.each do |field|
+      attribute field, :boolean
     end
 
     attribute :first_name, :string, default: ''
