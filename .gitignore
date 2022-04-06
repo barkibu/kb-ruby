@@ -16,3 +16,5 @@
 # Byebugs
 .byebug_history
 
+# intellij
+/.idea
