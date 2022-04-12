@@ -23,6 +23,16 @@ module KB
       super(attributes)
     end
 
+    def merge!(duplicated_pet_parent_key)
+      params = { preservable_pet_parent_key: key,
+                 erasable_pet_parent_key: duplicated_pet_parent_key }.transform_keys do |key|
+        key.to_s.camelize(:lower)
+      end
+
+      response = KB::ClientResolver.admin.request("petparents?#{params.to_query}", method: :put)
+      from_api response
+    end
+
     def self.attributes_from_response(response)
       response.transform_keys(&:underscore).transform_keys(&:to_sym).slice(*FIELDS)
     end

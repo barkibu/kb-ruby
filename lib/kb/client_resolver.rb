@@ -5,6 +5,10 @@ module KB
         call :petfamily, :consultations, :v1
       end
 
+      def admin
+        call :petfamily, :admin
+      end
+
       def pet_parent
         call :petfamily, :petparents
       end
