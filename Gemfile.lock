@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    kb (0.14.0)
+    kb (0.14.3)
       activemodel (>= 4.0.2)
       activerecord
       activesupport (>= 3.0.0)
@@ -10,10 +10,10 @@ PATH
       faraday-http
       faraday_middleware
       i18n
-    kb-fake (0.14.0)
+    kb-fake (0.14.3)
       activesupport (>= 3.0.0)
       countries
-      kb (= 0.14.0)
+      kb (= 0.14.3)
       sinatra
       webmock
 
@@ -44,7 +44,7 @@ GEM
     docile (1.4.0)
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
-    dry-configurable (0.14.0)
+    dry-configurable (0.15.0)
       concurrent-ruby (~> 1.0)
       dry-core (~> 0.6)
     dry-core (0.7.1)
