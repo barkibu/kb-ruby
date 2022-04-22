@@ -31,6 +31,8 @@ module KB
 
       response = KB::ClientResolver.admin.request("petparents?#{params.to_query}", method: :put)
       from_api response
+    rescue Faraday::Error => e
+      raise KB::Error.from_faraday(e)
     end
 
     def self.attributes_from_response(response)
