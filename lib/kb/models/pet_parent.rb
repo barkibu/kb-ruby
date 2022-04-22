@@ -30,7 +30,7 @@ module KB
       end
 
       response = KB::ClientResolver.admin.request("petparents?#{params.to_query}", method: :put)
-      from_api response
+      PetParent.from_api response
     rescue Faraday::Error => e
       raise KB::Error.from_faraday(e)
     end
