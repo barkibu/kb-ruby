@@ -11,7 +11,6 @@ PATH
       faraday_middleware
       i18n
     kb-fake (0.14.3)
-      activesupport (>= 3.0.0)
       countries
       kb (= 0.14.3)
       sinatra
