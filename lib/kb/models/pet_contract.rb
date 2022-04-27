@@ -21,7 +21,7 @@ module KB
                        conversion_utm_adgroup conversion_utm_campaign
                        conversion_utm_content conversion_utm_medium
                        conversion_utm_source conversion_utm_term
-                       conversion_utm_adgroup_id conversion_utm_campaign_id].freeze
+                       conversion_utm_adgroup_id conversion_utm_campaign_id hubspot_id].freeze
     DATE_FIELDS = %i[policy_start_date policy_expiration_date].freeze
     INTEGER_FIELDS = %i[price_yearly price_monthly price_discount_yearly].freeze
     FIELDS = [*STRING_FIELDS, *DATE_FIELDS, *INTEGER_FIELDS].freeze
