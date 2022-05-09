@@ -6,7 +6,7 @@ module KB
       end
 
       def fetch(key, &block)
-        instance.fetch("#{@base_url}/#{key}", expires_in: cache_expiration, &block)
+        instance.fetch(key, expires_in: cache_expiration, &block)
       end
 
       private
