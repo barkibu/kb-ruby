@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.16.0]
+- Add `Hubspot` model to retrieve information from [Hubspot Relationship endpoint](https://knowledge-base-staging.herokuapp.com/swagger-ui/index.html#/Hubspot)
+- Change `husbpot_id` attribute on PetContract, now it comes from the Hubspot Relationship
+
 ## [0.15.1]
 - Fix Cache invalidation deleting wrong key
 
