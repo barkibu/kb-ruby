@@ -28,6 +28,7 @@ RSpec.describe KB::ClientResolver do
     pet_contract
     plan
     product
+    hubspot
   ].each do |resource|
     it "responds to #{resource}" do
       expect(described_class).to respond_to resource

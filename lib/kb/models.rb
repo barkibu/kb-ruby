@@ -11,3 +11,5 @@ require 'kb/models/pet'
 require 'kb/models/product'
 require 'kb/models/plan'
 require 'kb/models/breed'
+
+require 'kb/models/hubspot_relationship'
