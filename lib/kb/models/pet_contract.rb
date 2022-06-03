@@ -67,5 +67,9 @@ module KB
     def pet
       @pet ||= Pet.find(pet_key)
     end
+
+    def hubspot_id
+      @hubspot_id ||= KB::Hubspot.relationship('policies', key).hubspot_id
+    end
   end
 end

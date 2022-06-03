@@ -33,6 +33,10 @@ module KB
         call :petfamily, :products
       end
 
+      def hubspot
+        call :petfamily, :hubspot
+      end
+
       def call(*args, &block)
         new(*args, &block).call
       end

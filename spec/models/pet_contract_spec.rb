@@ -29,4 +29,16 @@ RSpec.describe KB::PetContract do
       stubs.verify_stubbed_calls
     end
   end
+
+  describe '#hubspot_id' do
+    subject(:hubspot_id) { described_class.new.hubspot_id }
+
+    let(:hubspot) { KB::Hubspot.new(hubspot_id: '90872363') }
+
+    it 'returns the hubspot_id from the relationship' do
+      allow(KB::Hubspot).to receive(:relationship).and_return(hubspot)
+
+      expect(hubspot_id).to eq '90872363'
+    end
+  end
 end
