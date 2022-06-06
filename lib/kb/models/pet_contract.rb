@@ -3,8 +3,10 @@ module KB
     include Findable
     include Creatable
     include Updatable
+    include HubspotRelationable
 
     kb_api :pet_contract
+    hubspot_model :policies
 
     def self.find_by_contract_number(contract_number)
       find("contractnumber/#{contract_number}")
@@ -66,10 +68,6 @@ module KB
 
     def pet
       @pet ||= Pet.find(pet_key)
-    end
-
-    def hubspot_id
-      @hubspot_id ||= KB::Hubspot.relationship('policies', key).hubspot_id
     end
   end
 end
