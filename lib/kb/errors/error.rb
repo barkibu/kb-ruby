@@ -12,6 +12,8 @@ module KB
 
     def self.from_faraday(error)
       case error.response[:status]
+      when 404
+        ResourceNotFound
       when 409
         ConflictError
       when 422

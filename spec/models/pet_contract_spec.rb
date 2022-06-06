@@ -33,17 +33,17 @@ RSpec.describe KB::PetContract do
   describe '#hubspot_id' do
     subject(:hubspot_id) { described_class.new.hubspot_id }
 
-    let(:hubspot_relationship) { KB::HubspotRelationShip.new(hubspot_id: '90872363') }
+    let(:hubspot_relationship) { KB::HubspotRelationship.new(hubspot_id: '90872363') }
 
     it 'returns the hubspot_id from the relationship' do
-      allow(KB::HubspotRelationShip).to receive(:find).and_return(hubspot_relationship)
+      allow(KB::HubspotRelationship).to receive(:find).and_return(hubspot_relationship)
 
       expect(hubspot_id).to eq '90872363'
     end
 
     context 'when there is no relationship' do
       before do
-        allow(KB::HubspotRelationShip).to receive(:find).and_raise(KB::ResourceNotFound)
+        allow(KB::HubspotRelationship).to receive(:find).and_raise(KB::ResourceNotFound)
       end
 
       it 'returns nil' do

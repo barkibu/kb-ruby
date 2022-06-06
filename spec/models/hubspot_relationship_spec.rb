@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe KB::HubspotRelationShip do
+RSpec.describe KB::HubspotRelationship do
   before do
     client = described_class.send(:kb_client)
     connection = client.send('connection')
@@ -20,15 +20,15 @@ RSpec.describe KB::HubspotRelationShip do
   describe '.find' do
     subject(:find) { described_class.find(model, key) }
 
-    it 'returns a HubspotRelationShip instance' do
-      stubs.public_send(:get, resource_path) { api_response }
+    it 'returns a HubspotRelationship instance' do
+      stubs.get(resource_path) { api_response }
 
       expect(find).to be_a described_class
       stubs.verify_stubbed_calls
     end
 
     it 'returns the hubspot_id value' do
-      stubs.public_send(:get, resource_path) { api_response }
+      stubs.get(resource_path) { api_response }
 
       expect(find.hubspot_id).to eq '90872363'
       stubs.verify_stubbed_calls
@@ -47,7 +47,7 @@ RSpec.describe KB::HubspotRelationShip do
       end
 
       it 'raise the KB::ResourceNotFound error' do
-        stubs.public_send(:get, resource_path) { api_response }
+        stubs.get(resource_path) { api_response }
 
         expect { find }.to raise_error(KB::ResourceNotFound)
         stubs.verify_stubbed_calls

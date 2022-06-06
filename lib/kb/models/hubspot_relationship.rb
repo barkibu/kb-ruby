@@ -1,5 +1,5 @@
 module KB
-  class HubspotRelationShip < BaseModel
+  class HubspotRelationship < BaseModel
     include Queryable
 
     kb_api :hubspot

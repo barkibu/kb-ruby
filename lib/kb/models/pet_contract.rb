@@ -69,7 +69,7 @@ module KB
     end
 
     def hubspot_id
-      @hubspot_id ||= KB::HubspotRelationShip.find('policies', key).hubspot_id
+      @hubspot_id ||= KB::HubspotRelationship.find('policies', key).hubspot_id
     rescue KB::ResourceNotFound
       nil
     end
