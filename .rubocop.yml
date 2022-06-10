@@ -22,8 +22,8 @@ Metrics/BlockLength:
   Max: 15
   Exclude:
     - 'spec/**/*.rb'
-    - 'kb.gemspec'
-    - 'kb-*.gemspec'
+    - 'barkibu-kb.gemspec'
+    - 'barkibu-kb-*.gemspec'
 
 Naming/FileName:
   Exclude:

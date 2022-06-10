@@ -7,7 +7,7 @@ A wrapper of Barkibu's Knowledge Base Endpoint to make those entities and their 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'kb'
+gem 'barkibu-kb'
 ```
 
 And then execute:

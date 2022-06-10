@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    kb (0.16.0)
+    barkibu-kb (0.16.0)
       activemodel (>= 4.0.2)
       activerecord
       activesupport (>= 3.0.0)
@@ -10,9 +10,9 @@ PATH
       faraday-http
       faraday_middleware
       i18n
-    kb-fake (0.16.0)
+    barkibu-kb-fake (0.16.0)
+      barkibu-kb (= 0.16.0)
       countries
-      kb (= 0.16.0)
       sinatra
       webmock
 
@@ -168,10 +168,10 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  barkibu-kb!
+  barkibu-kb-fake!
   bundler (~> 1.17)
   byebug
-  kb!
-  kb-fake!
   rake (>= 12.3.3)
   rspec (~> 3.0)
   rubocop
