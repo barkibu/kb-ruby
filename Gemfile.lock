@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    barkibu-kb (0.16.0)
+    barkibu-kb (0.16.1)
       activemodel (>= 4.0.2)
       activerecord
       activesupport (>= 3.0.0)
@@ -10,8 +10,8 @@ PATH
       faraday-http
       faraday_middleware
       i18n
-    barkibu-kb-fake (0.16.0)
-      barkibu-kb (= 0.16.0)
+    barkibu-kb-fake (0.16.1)
+      barkibu-kb (= 0.16.1)
       countries
       sinatra
       webmock
@@ -67,8 +67,8 @@ GEM
       faraday (~> 1.0)
       http (>= 4.0, < 6)
     faraday-httpclient (1.0.1)
-    faraday-multipart (1.0.3)
-      multipart-post (>= 1.2, < 3)
+    faraday-multipart (1.0.4)
+      multipart-post (~> 2)
     faraday-net_http (1.0.1)
     faraday-net_http_persistent (1.2.0)
     faraday-patron (1.0.0)
@@ -97,7 +97,7 @@ GEM
       ffi-compiler (~> 1.0)
       rake (~> 13.0)
     minitest (5.15.0)
-    multipart-post (2.2.0)
+    multipart-post (2.2.3)
     mustermann (1.1.1)
       ruby2_keywords (~> 0.0.1)
     parallel (1.21.0)

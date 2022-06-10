@@ -27,7 +27,7 @@ Metrics/BlockLength:
 
 Naming/FileName:
   Exclude:
-    - 'lib/kb-*.rb'
+    - 'lib/barkibu-kb*.rb'
 
 Style/FrozenStringLiteralComment:
   Enabled: false

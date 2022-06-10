@@ -34,8 +34,8 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 2.6'
 
-  spec.add_runtime_dependency 'countries'
   spec.add_runtime_dependency 'barkibu-kb', KB::VERSION
+  spec.add_runtime_dependency 'countries'
   spec.add_runtime_dependency 'sinatra'
   spec.add_runtime_dependency 'webmock'
 end
