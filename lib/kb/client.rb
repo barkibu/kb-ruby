@@ -8,7 +8,7 @@ module KB
     end
 
     def request(sub_path, filters: nil, method: :get)
-      return connection.public_send(method, sub_path, filters).body if method != :get
+      return connection.public_send(method, sub_path, attributes_to_json(filters)).body if method != :get
 
       cache_key = "#{@base_url}/#{sub_path}/#{(filters || {}).sort.to_h}"
       KB::Cache.fetch(cache_key) do
