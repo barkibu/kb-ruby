@@ -10,6 +10,10 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
+      - name: Github whoami
+        run: |
+          git config user.name 'Barkibot'
+          git config user.email 'dev+bot@barkibu.com'
       - name: Release Gem
         uses: cadwallion/publish-rubygems-action@master
         env:
