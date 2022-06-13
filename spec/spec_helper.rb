@@ -3,7 +3,7 @@ require 'bundler/setup'
 require 'webmock/rspec'
 require 'simplecov'
 
-SimpleCov.profiles.define 'kb' do
+SimpleCov.profiles.define 'barkibu-kb' do
   add_filter '/bin/'
   add_filter '/spec/'
 
@@ -15,9 +15,9 @@ SimpleCov.profiles.define 'kb' do
   add_group 'Client', ['lib/kb/client', 'lib/kb/client_resolver']
 end
 
-SimpleCov.start 'kb'
+SimpleCov.start 'barkibu-kb'
 
-require 'kb'
+require 'barkibu-kb'
 
 gem_root = Pathname.new('..').expand_path(File.dirname(__FILE__))
 Dir[gem_root.join('spec/support/**/*.rb')].sort.each { |f| require f }

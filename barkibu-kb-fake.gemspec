@@ -3,7 +3,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'kb/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'kb-fake'
+  spec.name          = 'barkibu-kb-fake'
   spec.version       = KB::VERSION
   spec.authors       = ['Léo Figea']
   spec.email         = ['leo@barkibu.com']
@@ -16,7 +16,7 @@ Gem::Specification.new do |spec|
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
   # to allow pushing to a single host or delete this section to allow pushing to any host.
   if spec.respond_to?(:metadata)
-    spec.metadata['allowed_push_host'] = 'http://mygemserver.com'
+    # spec.metadata['allowed_push_host'] = 'http://mygemserver.com'
 
     spec.metadata['homepage_uri'] = spec.homepage
     # spec.metadata["source_code_uri"] = "TODO: Put your gem's public repo URL here."
@@ -34,8 +34,8 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 2.6'
 
+  spec.add_runtime_dependency 'barkibu-kb', KB::VERSION
   spec.add_runtime_dependency 'countries'
-  spec.add_runtime_dependency 'kb', KB::VERSION
   spec.add_runtime_dependency 'sinatra'
   spec.add_runtime_dependency 'webmock'
 end

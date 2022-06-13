@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'kb-fake'
+require 'barkibu-kb-fake'
 
 RSpec.describe KB::Pet do
   around do |example|
