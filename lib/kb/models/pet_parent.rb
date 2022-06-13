@@ -107,5 +107,11 @@ module KB
         PetContract.from_api(contract)
       end
     end
+
+    def referrals
+      self.class.kb_client.request("#{key}/referrals").map do |referral|
+        Referral.from_api(referral)
+      end
+    end
   end
 end

@@ -13,3 +13,4 @@ require 'kb/models/plan'
 require 'kb/models/breed'
 
 require 'kb/models/hubspot_relationship'
+require 'kb/models/referral'
