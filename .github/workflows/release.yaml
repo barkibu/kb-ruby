@@ -14,6 +14,8 @@ jobs:
         run: |
           git config user.name 'Barkibot'
           git config user.email 'dev+bot@barkibu.com'
+          git remote rename origin original
+          git remote add origin https://$GITHUB_TOKEN@github.com/${{github.repository}}
       - name: Release Gem
         uses: cadwallion/publish-rubygems-action@master
         env:
