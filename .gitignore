@@ -18,3 +18,4 @@
 
 # intellij
 /.idea
+.env
