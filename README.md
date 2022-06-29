@@ -70,6 +70,8 @@ KB.config.log_level = :debugger # :info by default
   - throws a `KB::Error` exception if something went wrong
 - `contracts`
   - returns all the KB::PetContract associated with this pet parent
+- `referrals`
+  - returns all the KB::Referral associated with this pet parent
 
 #### Assessment 📄
 
@@ -161,6 +163,14 @@ KB.config.log_level = :debugger # :info by default
 - `cats` (alias for all(species: 'cat'))
   - arg: `filters` hash of filters
   - returns: and array of Cat Breed instances matching the filters
+
+#### Referral
+`KB::Referral` represets a referral resource
+
+- `create`
+  - arg: `pet_parent_key`, `attributes` to initialize the entity
+  - returns: the raw attributes of the Referral instance
+  - throws an `KB::Error` exception if something went wrong
 
 ### Make an ActiveRecord wrap a KB entity
 

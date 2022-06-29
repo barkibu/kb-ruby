@@ -26,7 +26,7 @@ module KB
 
     def self.create(pet_parent_key, attributes)
       response = kb_client.request("#{pet_parent_key}/referrals", filters: attributes, method: :post)
-      new(attributes_from_response(response))
+      attributes_from_response(response)
     rescue Faraday::Error => e
       raise KB::Error.from_faraday(e)
     end
