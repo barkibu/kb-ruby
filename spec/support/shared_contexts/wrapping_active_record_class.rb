@@ -13,6 +13,10 @@ shared_context 'with a Wrapping ActiveRecord class' do # rubocop:disable RSpec/M
     Class.new(active_record_class) do
       include KB::Concerns::AsKBWrapper
       wrap_kb model: resource_class, skip_callback: wrapper_skip_callback
+
+      def self.find_by(*)
+        raise NotImplementedError, 'stub the return value in your spec'
+      end
     end
   end
 end
