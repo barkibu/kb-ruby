@@ -44,6 +44,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rubocop'
   spec.add_development_dependency 'rubocop-rspec'
   spec.add_development_dependency 'simplecov'
+  spec.add_development_dependency 'webmock'
   spec.add_runtime_dependency 'activemodel', '>= 4.0.2'
   spec.add_runtime_dependency 'activerecord'
   spec.add_runtime_dependency 'activesupport', '>= 3.0.0'
@@ -51,5 +52,4 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'faraday-http'
   spec.add_runtime_dependency 'faraday_middleware'
   spec.add_runtime_dependency 'i18n'
-  spec.add_runtime_dependency 'webmock'
 end
