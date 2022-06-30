@@ -26,6 +26,18 @@ module BoundedContext
           json_response 200, contracts
         end
 
+        get '/v1/petparents/:key/referrals' do
+          json_response 200, referrals_by_pet_parent_key(params['key'])
+        end
+
+        post '/v1/petparents/:key/referrals' do
+          resource = JSON.parse(request.body.read)
+          resource = resource.merge 'key' => SecureRandom.uuid
+          resource = resource.merge 'referralKey' => params['key']
+          resource_state(:referrals) << resource
+          json_response 201, resource
+        end
+
         put '/v1/petparents' do
           params = JSON.parse(request.body.read)
           existing_pet_parent = pet_parent_by_key(params) || pet_parent_by_email(params) || pet_parent_by_phone(params)
@@ -76,6 +88,10 @@ module BoundedContext
 
         def pets_by_pet_parent_key(key)
           resource_state(:pets).select { |pet| pet['petParentKey'] == key }
+        end
+
+        def referrals_by_pet_parent_key(key)
+          resource_state(:referrals).select { |resource| resource['referralKey'] == key }
         end
 
         def same_email_but_different_phone_number?(previous, new)

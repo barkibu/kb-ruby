@@ -21,13 +21,13 @@ RSpec/FilePath:
 Metrics/BlockLength:
   Max: 15
   Exclude:
-    - 'spec/**/*.rb'
-    - 'barkibu-kb.gemspec'
-    - 'barkibu-kb-*.gemspec'
+    - "spec/**/*.rb"
+    - "barkibu-kb.gemspec"
+    - "barkibu-kb-*.gemspec"
 
 Naming/FileName:
   Exclude:
-    - 'lib/barkibu-kb*.rb'
+    - "lib/barkibu-kb*.rb"
 
 Style/FrozenStringLiteralComment:
   Enabled: false
@@ -43,3 +43,6 @@ Metrics/MethodLength:
 
 Metrics/ModuleLength:
   Max: 110
+
+RSpec/ExampleLength:
+  CountAsOne: ["array", "heredoc", "hash"]

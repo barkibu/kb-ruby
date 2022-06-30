@@ -22,9 +22,11 @@ require 'barkibu-kb'
 gem_root = Pathname.new('..').expand_path(File.dirname(__FILE__))
 Dir[gem_root.join('spec/support/**/*.rb')].sort.each { |f| require f }
 
-ENV['KB_API_URL_TEMPLATE'] = 'https://test.api.%<bounded_context>s.test_api_barkkb.com/%<version>s/%<entity>s'
+ENV['KB_API_URL_TEMPLATE'] = 'https://test_api_barkkb.com/%<version>s/%<entity>s'
 
 RSpec.configure do |config|
+  WebMock.disable_net_connect!
+
   # Enable flags like --only-failures and --next-failure
   config.example_status_persistence_file_path = '.rspec_status'
 
