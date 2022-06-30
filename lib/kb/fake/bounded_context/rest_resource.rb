@@ -25,7 +25,7 @@ module BoundedContext
 
       def filter_resources(name, filters)
         resource_state(name).select do |item|
-          item[:deleted_at].blank? && filters.slice(*filterable_attributes(name)).reduce(true) do |sum, (key, value)|
+          item['deleted_at'].blank? && filters.slice(*filterable_attributes(name)).reduce(true) do |sum, (key, value)|
             sum && (value.blank? \
                     || (item.fetch(key, '') || '').downcase.include?(value.downcase))
           end
@@ -70,7 +70,7 @@ module BoundedContext
         return send("on_#{name}_destroy", version) if respond_to? "on_#{name}_destroy"
 
         resource_to_delete = find_resource name, params['key']
-        resource_to_delete[:deleted_at] = DateTime.now
+        resource_to_delete['deleted_at'] = DateTime.now
 
         update_resource_state(name, resource_to_delete)
 
@@ -80,7 +80,9 @@ module BoundedContext
       private
 
       def find_resource(name, key)
-        resource_state(name).detect { |resource| resource['key'] == key }
+        resource_state(name).detect do |resource|
+          (resource['key'] == key) && resource['deleted_at'].blank?
+        end
       end
 
       def update_resource_state(name, updated_resource)

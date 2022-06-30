@@ -9,6 +9,18 @@ RSpec.describe KB::Pet do
     KB::Fake::Api.restore snapshot
   end
 
+  describe '#destroy' do
+    let(:attributes) do
+      { name: 'fuffy', pet_parent_key: 'new_pet_parent_key', mongrel: false }
+    end
+    let!(:existing_pet) { described_class.create(attributes) }
+
+    it 'cannot get a deleted pet' do
+      described_class.destroy(existing_pet[:key])
+      expect { described_class.find(existing_pet[:key]) }.to raise_error(KB::ResourceNotFound)
+    end
+  end
+
   describe '#upsert' do
     subject(:upserted_pet) { described_class.upsert(attributes.merge(mongrel: true, chip: 'my_chip')) }
 
