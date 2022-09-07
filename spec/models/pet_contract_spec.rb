@@ -51,4 +51,24 @@ RSpec.describe KB::PetContract do
       end
     end
   end
+
+  describe '==' do
+    it 'returns true for two contracts with the same key' do
+      contract1 = described_class.new(key: 'test')
+      contract2 = described_class.new(key: 'test')
+      expect(contract1 == contract2).to be true
+    end
+
+    it 'returns false for two contracts with different key' do
+      contract1 = described_class.new(key: 'test1')
+      contract2 = described_class.new(key: 'test2')
+      expect(contract1 == contract2).to be false
+    end
+
+    it 'returns false for two objects of different classes' do
+      contract = described_class.new(key: 'test1')
+      pet = KB::Pet.new(key: 'test2')
+      expect(contract == pet).to be false
+    end
+  end
 end

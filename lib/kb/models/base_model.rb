@@ -26,6 +26,16 @@ module KB
       @persisted = true
     end
 
+    # Copy-paste of ActiveRecord equality logic
+    # https://github.com/rails/rails/blob/main/activerecord/lib/active_record/core.rb
+    def ==(other)
+      super ||
+        (other.instance_of?(self.class) &&
+        !key.nil? &&
+        other.key == key)
+    end
+    alias eql? ==
+
     def self.define_attribute_methods(*fields)
       super
       fields.each do |field|
