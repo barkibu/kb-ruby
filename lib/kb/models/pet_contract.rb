@@ -23,10 +23,10 @@ module KB
                        conversion_utm_source conversion_utm_term
                        conversion_utm_adgroup_id conversion_utm_campaign_id].freeze
     DATE_FIELDS = %i[policy_start_date policy_expiration_date].freeze
-    INTEGER_FIELDS = %i[price_yearly price_monthly price_discount_yearly].freeze
+    INTEGER_FIELDS = %i[
+      price_yearly price_monthly price_discount_yearly payment_interval_months
+    ].freeze
     FIELDS = [*STRING_FIELDS, *DATE_FIELDS, *INTEGER_FIELDS].freeze
-
-    IMMUTABLE_FIELDS = (FIELDS - %i[status contract_document policy_expiration_date]).freeze
 
     define_attribute_methods(*FIELDS)
 
