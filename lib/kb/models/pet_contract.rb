@@ -28,9 +28,6 @@ module KB
     ].freeze
     FIELDS = [*STRING_FIELDS, *DATE_FIELDS, *INTEGER_FIELDS].freeze
 
-    # TODO: constant not used. Should be removed?
-    IMMUTABLE_FIELDS = (FIELDS - %i[status contract_document policy_expiration_date payment_interval_months]).freeze
-
     define_attribute_methods(*FIELDS)
 
     STRING_FIELDS.each do |field|
