@@ -44,7 +44,7 @@ module KB
           end
 
           singleton_class.instance_eval do
-            define_method(:kb_find_by) do |**attributes|
+            define_method(:kb_find_by) do |attributes|
               kb_model = model.all(attributes).first
               return nil if kb_model.nil?
 
@@ -57,7 +57,7 @@ module KB
           end
         end
 
-        def kb_find_by!(**attributes)
+        def kb_find_by!(attributes)
           kb_find_by(attributes).presence || raise(ActiveRecord::RecordNotFound)
         end
       end
