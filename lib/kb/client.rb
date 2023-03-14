@@ -37,17 +37,21 @@ module KB
     end
 
     def update(key, attributes)
-      KB::Cache.delete("#{@base_url}/#{key}")
+      clear_cache_for(key)
       connection.patch(key.to_s, attributes_to_json(attributes)).body
     end
 
     def destroy(key)
-      KB::Cache.delete("#{@base_url}/#{key}")
+      clear_cache_for(key)
       connection.delete(key.to_s).body
     end
 
     def upsert(attributes)
       connection.put('', attributes_to_json(attributes)).body
+    end
+
+    def clear_cache_for(key)
+      KB::Cache.delete("#{@base_url}/#{key}")
     end
 
     private

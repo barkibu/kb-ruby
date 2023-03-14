@@ -11,6 +11,10 @@ module KB
     define_model_callbacks :save
     after_save :persist!
 
+    class << self
+      delegate :clear_cache_for, to: :kb_client
+    end
+
     def initialize(attributes = {})
       super
       @persisted = false
