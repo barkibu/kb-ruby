@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 - See diff: https://github.com/barkibu/kb-ruby/compare/v0.20.0...HEAD
+- Add city attribute to PetParent model
 
 ## [0.20.0]
 - Expose cache clearing API on client/model
