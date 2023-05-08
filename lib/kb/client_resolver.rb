@@ -37,8 +37,8 @@ module KB
         call :petfamily, :hubspot
       end
 
-      def call(*args, &block)
-        new(*args, &block).call
+      def call(*args, **kwargs, &block)
+        new(*args, **kwargs, &block).call
       end
     end
 
