@@ -7,11 +7,12 @@ module KB
       @status_code = status_code
       @body = body
       @message = "Received Status: #{status_code}\n#{body}"
+      @message = error.message if error.present? && body.nil? && status_code.nil?
       set_backtrace error.backtrace if error
     end
 
     def self.from_faraday(error)
-      case error.response[:status]
+      case error.response&.[](:status)
       when 404
         ResourceNotFound
       when 409
@@ -20,7 +21,7 @@ module KB
         UnprocessableEntityError
       else
         self
-      end.new(error.response[:status], error.response[:body], error)
+      end.new(error.response&.[](:status), error.response&.[](:body), error)
     end
   end
 end
