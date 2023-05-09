@@ -6,7 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [unreleased]
-- See diff: https://github.com/barkibu/kb-ruby/compare/v0.21.0...HEAD
+- See diff: https://github.com/barkibu/kb-ruby/compare/v0.22.0...HEAD
+
+# [0.22.0]
+- Fix error parsing if HTTP client returns no response
 
 ## [0.21.0]
 - Add city attribute to PetParent model
