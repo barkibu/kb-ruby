@@ -234,7 +234,7 @@ You should be able to use the API seemlessly and the calls to the API will be in
 ## Development & Testing
 
 ```bash
-    docker run -it --rm -v $(pwd):/app --workdir=/app ruby:2.6.5 bash
+    docker run -it --rm -v $(pwd):/app --workdir=/app ruby:2.7.2 bash
 
     > bundle install
     > rspec
