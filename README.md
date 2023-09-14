@@ -234,12 +234,18 @@ You should be able to use the API seemlessly and the calls to the API will be in
 ## Development & Testing
 
 ```bash
-    docker run -it --rm -v $(pwd):/app --workdir=/app ruby:2.7.2 bash
-
-    > bundle install
-    > rspec
+docker run -it --rm -v $(pwd):/app --workdir=/app ruby:2.7.2 bash
+> bundle install
+> rspec
 ```
 
+You can also start an interactive console if needed:
+```bash
+KB_API_URL_TEMPLATE=https://example.com/%{version}/%{entity} \
+KB_API_KEY=YourKbApiKey \
+KB_PARTNER_KEY=YourKbPartnerKey \
+bin/console
+```
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/kb. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
