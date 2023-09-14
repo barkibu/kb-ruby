@@ -117,7 +117,7 @@ KB.config.log_level = :debugger # :info by default
   - returns all the KB::PetContract associated with this pet
 - `upsert`
   - updates KB:Pet if exists a Pet with same name for its PetParent
-  - creates a new KB:Pet if not exists a Pet with same name for its PetParent 
+  - creates a new KB:Pet if not exists a Pet with same name for its PetParent
 
 #### PetContract 📝
 
@@ -138,6 +138,15 @@ KB.config.log_level = :debugger # :info by default
 - `save!`
   - persists (create or update) the entity to the Knowledge Base
   - throws an `KB::Error` exception if something went wrong
+- `search`
+  - arg: `filters` hash. Currently, KB API supports these keys:
+    - `page`: results page number. Default 0.
+    - `size`: amount of results per page. Default 10.
+    - `chip`: searches contracts by insured pet chip
+  - returns: a hash including:
+    - `total`: total amount of contracts found
+    - `page`: current page number
+    - `elements`: array of PetContract instances matching the filters
 
 #### Plan 🗺
 

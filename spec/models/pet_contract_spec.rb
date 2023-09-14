@@ -71,4 +71,43 @@ RSpec.describe KB::PetContract do
       expect(contract == pet).to be false
     end
   end
+
+  describe '.search' do
+    subject(:search) { described_class.search(chip: chip, page: page, size: size) }
+
+    let(:chip) { '123451234512345' }
+    let(:page) { 2 }
+    let(:size) { 100 }
+    let(:found_contracts) { [] }
+    let(:response_body) do
+      { page: page,
+        total: found_contracts.size,
+        elements: found_contracts }
+    end
+
+    before do
+      stub_request(:get, 'https://test_api_barkkb.com/v1/petcontracts/search')
+        .with(query: hash_including(chip: chip, page: page.to_s, size: size.to_s))
+        .to_return(status: 200, body: response_body.to_json)
+    end
+
+    it 'returns a hash with pagination data' do
+      expect(search).to include(page: instance_of(Integer),
+                                total: instance_of(Integer))
+    end
+
+    context 'when there are no found contracts' do
+      it 'returns a hash including an empty array' do
+        expect(search[:elements]).to eq([])
+      end
+    end
+
+    context 'when there are found contracts' do
+      let(:found_contracts) { [{ key: 'dummy1' }, { key: 'dummy2' }] }
+
+      it 'returns a hash including an array of PetContracts' do
+        expect(search[:elements]).to all(be_an_instance_of(described_class))
+      end
+    end
+  end
 end
