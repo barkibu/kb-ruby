@@ -14,3 +14,4 @@ require 'kb/models/breed'
 
 require 'kb/models/hubspot_relationship'
 require 'kb/models/referral'
+require 'kb/models/search_result'

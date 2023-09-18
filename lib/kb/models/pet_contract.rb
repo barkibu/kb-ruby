@@ -3,6 +3,7 @@ module KB
     include Findable
     include Creatable
     include Updatable
+    include Searchable
 
     kb_api :pet_contract
 
