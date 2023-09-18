@@ -10,7 +10,7 @@ module KB
       def search(filters)
         response = kb_client.request('search', filters: filters).symbolize_keys
         elements = response[:elements].map { |contract| from_api(contract) }
-        response.merge(elements: elements)
+        KB::SearchResult.new(**response.merge(elements: elements))
       rescue Faraday::Error => e
         raise KB::Error.from_faraday(e)
       end

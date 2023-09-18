@@ -28,13 +28,12 @@ RSpec.describe KB::Searchable do
       end
     end
 
-    it 'returns a hash with pagination data' do
-      expect(search).to include(page: instance_of(Integer),
-                                total: instance_of(Integer))
+    it 'returns a KB::SearchResult object' do
+      expect(search).to be_a(KB::SearchResult)
     end
 
     it 'returns instances of the including class' do
-      expect(search[:elements]).to all(be_an_instance_of(including_class))
+      expect(search.elements).to all(be_an_instance_of(including_class))
     end
   end
 

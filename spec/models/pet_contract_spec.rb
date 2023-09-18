@@ -80,22 +80,21 @@ RSpec.describe KB::PetContract do
         .to_return(status: 200, body: response_body.to_json)
     end
 
-    it 'returns a hash with pagination data' do
-      expect(search).to include(page: instance_of(Integer),
-                                total: instance_of(Integer))
+    it 'returns a KB::SearchResult' do
+      expect(search).to be_a(KB::SearchResult)
     end
 
     context 'when there are no found contracts' do
-      it 'returns a hash including an empty array' do
-        expect(search[:elements]).to eq([])
+      it 'returns a KB::SearchResult object including no elements' do
+        expect(search.elements).to eq([])
       end
     end
 
     context 'when there are found contracts' do
       let(:found_contracts) { [{ key: 'dummy1' }, { key: 'dummy2' }] }
 
-      it 'returns a hash including an array of PetContracts' do
-        expect(search[:elements]).to all(be_an_instance_of(described_class))
+      it 'returns a hash including PetContracts' do
+        expect(search.elements).to all(be_an_instance_of(described_class))
       end
     end
   end

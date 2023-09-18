@@ -12,9 +12,8 @@ RSpec.describe KB::PetContract do
     let(:size) { 5 }
     let!(:pet) { KB::Pet.new(KB::Pet.create(chip: chip)) }
 
-    it 'returns a hash with pagination data' do
-      expect(search).to include(page: instance_of(Integer),
-                                total: instance_of(Integer))
+    it 'returns a KB::SearchResult object' do
+      expect(search).to be_a(KB::SearchResult)
     end
 
     context 'when there are no contracts for the given chip' do
@@ -23,16 +22,16 @@ RSpec.describe KB::PetContract do
         described_class.create(pet_key: another_pet.key)
       end
 
-      it 'returns a hash including an empty array' do
-        expect(search[:elements]).to eq([])
+      it 'returns a KB::SearchResult object including no elements' do
+        expect(search.elements).to eq([])
       end
     end
 
     context 'when there is a contract for the given chip' do
       let!(:contract) { described_class.new(described_class.create(pet_key: pet.key)) }
 
-      it 'returns a hash including an array with that contract' do
-        expect(search[:elements].map(&:key)).to eq([contract.key])
+      it 'returns a KB::SearchResult object including an array with that contract' do
+        expect(search.elements.map(&:key)).to eq([contract.key])
       end
     end
 
@@ -46,12 +45,12 @@ RSpec.describe KB::PetContract do
 
         let(:page) { 2 }
 
-        it 'returns a hash including an array with many items' do
-          expect(search[:elements]).to be_many
+        it 'returns a KB::SearchResult object including many elements' do
+          expect(search.elements).to be_many
         end
 
-        it 'returns a hash including an array of PetContracts' do
-          expect(search[:elements]).to all(be_an_instance_of(described_class))
+        it 'returns a KB::SearchResult object including PetContracts' do
+          expect(search.elements).to all(be_an_instance_of(described_class))
         end
       end
     end
