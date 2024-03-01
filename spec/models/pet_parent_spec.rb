@@ -72,4 +72,75 @@ RSpec.describe KB::PetParent do
       end
     end
   end
+
+  describe '#referrers' do
+    subject(:referrers) { pet_parent.referrers }
+
+    let(:pet_parent) { described_class.new(key: pet_parent_key) }
+    let(:pet_parent_key) { 'pet_parent_key' }
+    let(:referrer_pet_parent_key) { 'referrer_pet_parent_key' }
+
+    context 'when no referrers exist for pet parent' do
+      before do
+        stub_request(:get, "#{base_url}/petparents/#{pet_parent_key}/referrers")
+          .to_return(status: 200, body: '[]')
+      end
+
+      it { is_expected.to be_empty }
+    end
+
+    context 'when referrers exist for pet parent' do
+      let(:referrers_response) do
+        [
+          {
+            key: 'key_1',
+            referralKey: referrer_pet_parent_key,
+            referredKey: 'referred_pet_key_1',
+            joinedAt: '2022-06-28T09:00:00',
+            type: 'pet'
+          },
+          {
+            key: 'key_2',
+            referralKey: referrer_pet_parent_key,
+            referredKey: 'referred_pet_key_2',
+            joinedAt: '2022-06-29T00:00:00',
+            type: 'pet'
+          }
+        ]
+      end
+
+      before do
+        stub_request(:get, "#{base_url}/petparents/#{pet_parent_key}/referrers")
+          .to_return(status: 200, body: referrers_response.to_json)
+      end
+
+      it 'returns two records' do
+        expect(referrers.size).to eq 2
+      end
+
+      it 'returns KB::Referral records' do
+        expect(referrers).to all(be_a(KB::Referral))
+      end
+
+      it 'sets attributes for first model' do
+        expect(referrers.first).to have_attributes(
+          key: 'key_1',
+          referral_key: referrer_pet_parent_key,
+          referred_key: 'referred_pet_key_1',
+          joined_at: Date.new(2022, 6, 28),
+          type: 'pet'
+        )
+      end
+
+      it 'sets attributes for the second model' do
+        expect(referrers.last).to have_attributes(
+          key: 'key_2',
+          referral_key: referrer_pet_parent_key,
+          referred_key: 'referred_pet_key_2',
+          joined_at: DateTime.new(2022, 6, 29),
+          type: 'pet'
+        )
+      end
+    end
+  end
 end

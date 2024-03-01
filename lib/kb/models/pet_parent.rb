@@ -113,5 +113,11 @@ module KB
         Referral.from_api(referral)
       end
     end
+
+    def referrers
+      self.class.kb_client.request("#{key}/referrers").map do |referral|
+        Referral.from_api(referral)
+      end
+    end
   end
 end
