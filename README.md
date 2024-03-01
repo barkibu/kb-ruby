@@ -72,6 +72,8 @@ KB.config.log_level = :debugger # :info by default
   - returns all the KB::PetContract associated with this pet parent
 - `referrals`
   - returns all the KB::Referral associated with this pet parent
+- `referrers`
+  - returns all the KB::Referral associated with any of the pet parent's pets 
 
 #### Assessment 📄
 
