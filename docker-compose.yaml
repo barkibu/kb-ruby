@@ -1,12 +1,12 @@
 version: "3.0"
 services:
   kb:
-    image: ruby:2.7.1-buster
+    image: ruby:3.2.3
     working_dir: /app
     volumes:
       - .:/app
       - bundle:/usr/local/bundle
-    environment: 
+    environment:
       - KB_API_URL_TEMPLATE=$KB_API_URL_TEMPLATE
       - KB_PARTNER_KEY=$KB_PARTNER_KEY
       - KB_API_KEY=$KB_API_KEY
