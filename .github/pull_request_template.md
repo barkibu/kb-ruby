@@ -12,4 +12,4 @@
 - [ ] Tests added/updated
 - [ ] README file updated
 - [ ] Changelog updated
-- [ ] Version updated
+- [ ] Version file `lib/kb/version.rb` updated
