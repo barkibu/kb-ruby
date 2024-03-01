@@ -6,7 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [unreleased]
-- See diff: https://github.com/barkibu/kb-ruby/compare/v0.23.0...HEAD
+- See diff: https://github.com/barkibu/kb-ruby/compare/v0.24.0...HEAD
+
+# [0.24.0]
+- Add support for `.referrers` method on `PetParent`
 
 # [0.23.0]
 - Add support for `.search` method on `PetContract`
