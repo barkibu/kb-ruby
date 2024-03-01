@@ -168,7 +168,7 @@ PLATFORMS
 DEPENDENCIES
   barkibu-kb!
   barkibu-kb-fake!
-  bundler (~> 2.4.12)
+  bundler
   byebug
   rake (>= 12.3.3)
   rspec (~> 3.0)
