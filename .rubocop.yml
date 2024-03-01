@@ -11,6 +11,9 @@
 #
 require: rubocop-rspec
 
+Gemspec/RequireMFA:
+  Enabled: false
+
 AllCops:
   TargetRubyVersion: 2.6.5
   NewCops: enable
