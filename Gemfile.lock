@@ -10,7 +10,6 @@ PATH
       faraday-http
       faraday_middleware
       i18n
-      webmock
     barkibu-kb-fake (0.17.0)
       barkibu-kb (= 0.17.0)
       countries
@@ -171,13 +170,14 @@ PLATFORMS
 DEPENDENCIES
   barkibu-kb!
   barkibu-kb-fake!
-  bundler (~> 1.17)
+  bundler
   byebug
   rake (>= 12.3.3)
   rspec (~> 3.0)
   rubocop
   rubocop-rspec
   simplecov
+  webmock
 
 BUNDLED WITH
-   1.17.3
+   2.5.6
