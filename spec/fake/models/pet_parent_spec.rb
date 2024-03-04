@@ -127,4 +127,45 @@ RSpec.describe KB::PetParent do
       end
     end
   end
+
+  describe '#referrers' do
+    let(:referral_pet_parent) { described_class.new described_class.create(attributes) }
+
+    let(:attributes) do
+      { phone_number: '683123123', prefix_phone_number: '+34', email: 'foo@example.com' }
+    end
+
+    before do
+      referral_pet_parent
+    end
+
+    context 'with no referrers' do
+      it 'returns an empty list' do
+        expect(referral_pet_parent.referrers).to eq([])
+      end
+    end
+
+    context 'with a referrer' do
+      let(:referrer) { described_class.create }
+      let(:pet) { KB::Pet.create(pet_parent_key: referral_pet_parent.key) }
+
+      before do
+        KB::Referral.create(referrer[:key],
+                            { type: 'pet', referred_key: pet[:key], joined_at: '2018-01-01T17:09:42.411' })
+      end
+
+      it 'returns the referrer of the pet parent' do
+        expect(referral_pet_parent.referrers.length).to eq(1)
+      end
+
+      it 'returns the referrer with all the attributes' do
+        expect(referral_pet_parent.referrers.first).to have_attributes(
+          'type' => 'pet',
+          'referral_key' => referrer[:key],
+          'referred_key' => pet[:key],
+          'joined_at' => '2018-01-01'.to_date
+        )
+      end
+    end
+  end
 end
