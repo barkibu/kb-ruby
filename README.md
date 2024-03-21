@@ -73,7 +73,7 @@ KB.config.log_level = :debugger # :info by default
 - `referrals`
   - returns all the KB::Referral associated with this pet parent
 - `referrers`
-  - returns all the KB::Referral associated with any of the pet parent's pets 
+  - returns all the KB::Referral associated with any of the pet parent's pets
 
 #### Assessment 📄
 
@@ -245,7 +245,7 @@ You should be able to use the API seemlessly and the calls to the API will be in
 ## Development & Testing
 
 ```bash
-docker run -it --rm -v $(pwd):/app --workdir=/app ruby:2.7.2 bash
+docker compose run --rm kb bash
 > bundle install
 > rspec
 ```

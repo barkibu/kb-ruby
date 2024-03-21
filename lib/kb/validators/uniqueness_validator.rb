@@ -18,9 +18,9 @@ module KB
     end
 
     def scope_filters(record, _attribute, _value)
-      Array.wrap(options[:scope]).map do |scope_attribute|
+      Array.wrap(options[:scope]).to_h do |scope_attribute|
         [scope_attribute, record.send(scope_attribute)]
-      end.to_h
+      end
     end
   end
 end
