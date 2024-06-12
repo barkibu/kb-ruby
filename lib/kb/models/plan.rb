@@ -19,13 +19,8 @@ module KB
     attribute :plan_life_in_months, :integer
     attribute :buyable, :boolean
 
-    STRING_FIELDS.each do |field|
-      attribute field, :string
-    end
-
-    HASH_FIELDS.each do |field|
-      attribute field
-    end
+    define_attributes STRING_FIELDS, :string
+    define_attributes HASH_FIELDS
 
     def save!
       return unless changed?

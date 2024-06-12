@@ -16,13 +16,8 @@ module KB
 
     define_attribute_methods(*FIELDS)
 
-    STRING_FIELDS.each do |field|
-      attribute field, :string
-    end
-
-    DATE_FIELDS.each do |field|
-      attribute field, :date
-    end
+    define_attributes STRING_FIELDS, :string
+    define_attributes DATE_FIELDS, :date
 
     def self.find(model, model_key)
       response = kb_client.request("#{model}/#{model_key}/relationship")
