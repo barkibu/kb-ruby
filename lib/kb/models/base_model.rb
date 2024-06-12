@@ -24,6 +24,12 @@ module KB
           end
         end
       end
+
+      def define_attributes(attributes, cast_type = nil)
+        attributes.each do |attribute|
+          attribute attribute, cast_type&.to_sym
+        end
+      end
     end
 
     def initialize(attributes = {})

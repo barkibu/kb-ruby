@@ -52,18 +52,9 @@ module KB
     alias phone_number_prefix prefix_phone_number
     alias phone_number_prefix= prefix_phone_number=
 
-    STRING_FIELDS.each do |field|
-      attribute field, :string
-    end
-
-    DATE_FIELDS.each do |field|
-      attribute field, :date
-    end
-
-    BOOLEAN_FIELDS.each do |field|
-      attribute field, :boolean
-    end
-
+    define_attributes STRING_FIELDS, :string
+    define_attributes DATE_FIELDS, :date
+    define_attributes BOOLEAN_FIELDS, :boolean
     attribute :first_name, :string, default: ''
 
     def save!
