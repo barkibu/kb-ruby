@@ -13,6 +13,17 @@ module KB
 
     class << self
       delegate :clear_cache_for, to: :kb_client
+
+      def define_attribute_methods(*fields)
+        super
+        fields.each do |field|
+          define_method :"#{field}=" do |value|
+            super(value).tap do
+              public_send "#{field}_will_change!" if public_send("#{field}_changed?")
+            end
+          end
+        end
+      end
     end
 
     def initialize(attributes = {})
@@ -39,16 +50,5 @@ module KB
         other.key == key)
     end
     alias eql? ==
-
-    def self.define_attribute_methods(*fields)
-      super
-      fields.each do |field|
-        define_method :"#{field}=" do |value|
-          super(value).tap do
-            public_send "#{field}_will_change!" if public_send("#{field}_changed?")
-          end
-        end
-      end
-    end
   end
 end
