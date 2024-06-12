@@ -15,5 +15,11 @@ module KB
         raise KB::Error.from_faraday(e)
       end
     end
+
+    def reload
+      self.class.clear_cache_for(key)
+      self.attributes = self.class.find(key).attributes
+      self
+    end
   end
 end
