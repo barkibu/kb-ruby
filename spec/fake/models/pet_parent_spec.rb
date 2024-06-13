@@ -168,4 +168,48 @@ RSpec.describe KB::PetParent do
       end
     end
   end
+
+  describe '#iban_last4' do
+    context 'with an existing pet parent' do
+      let(:pet_parent) { described_class.new described_class.create }
+
+      context 'with no iban' do
+        it 'returns nil' do
+          expect(pet_parent.iban_last4).to be_nil
+        end
+      end
+
+      context 'with an iban' do
+        before do
+          pet_parent.update_iban('ES9121000418450200051332')
+        end
+
+        it 'returns the last 4 digits from the iban of the pet parent' do
+          expect(pet_parent.iban_last4).to eq('1332')
+        end
+      end
+    end
+  end
+
+  describe '#iban' do
+    context 'with an existing pet parent' do
+      let(:pet_parent) { described_class.new described_class.create }
+
+      context 'with no iban' do
+        it 'returns nil' do
+          expect(pet_parent.iban).to be_nil
+        end
+      end
+
+      context 'with an iban' do
+        before do
+          pet_parent.update_iban('ES9121000418450200051332')
+        end
+
+        it 'returns the iban of the pet parent' do
+          expect(pet_parent.iban).to eq('ES9121000418450200051332')
+        end
+      end
+    end
+  end
 end
