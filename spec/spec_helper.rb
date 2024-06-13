@@ -2,6 +2,7 @@ require 'pathname'
 require 'bundler/setup'
 require 'webmock/rspec'
 require 'simplecov'
+require 'byebug'
 
 SimpleCov.profiles.define 'barkibu-kb' do
   add_filter '/bin/'
