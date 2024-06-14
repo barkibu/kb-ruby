@@ -32,8 +32,6 @@ module KB
 
     define_attribute_methods(*FIELDS)
 
-    STRING_FIELDS.each do |field|
-      attribute field, :string
-    end
+    define_attributes STRING_FIELDS, :string
   end
 end

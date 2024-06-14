@@ -15,6 +15,15 @@ module BoundedContext
           KB::PetParent::FIELDS.map { |k| k.to_s.camelize(:lower) }
         end
 
+        def on_petparents_show(_version)
+          pet_parent = pet_parent_by_key(params).dup
+          return json_response 404, {} if pet_parent.nil?
+
+          pet_parent['iban_last4'] = pet_parent.delete('iban')&.chars&.last(4)&.join
+
+          json_response 200, pet_parent
+        end
+
         get '/v1/petparents/:key/pets' do
           json_response 200, pets_by_pet_parent_key(params['key'])
         end
@@ -68,6 +77,25 @@ module BoundedContext
           end
 
           json_response 200, resource
+        end
+
+        get '/v1/petparents/:key/iban' do
+          pet_parent = pet_parent_by_key(params)
+          return json_response 404, {} if pet_parent.blank?
+
+          json_response 200, { iban: pet_parent['iban'] }
+        end
+
+        put '/v1/petparents/:key/iban' do
+          pet_parent = pet_parent_by_key(params)
+          return json_response 404, {} if pet_parent.blank?
+
+          body = JSON.parse(request.body.read)
+
+          updated_pet_parent = pet_parent.merge body.slice('iban')
+          update_resource_state(:petparents, updated_pet_parent)
+
+          json_response 200, { iban: updated_pet_parent['iban'] }
         end
 
         private

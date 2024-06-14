@@ -16,13 +16,8 @@ module KB
 
     define_attribute_methods(*FIELDS)
 
-    STRING_FIELDS.each do |field|
-      attribute field, :string
-    end
-
-    DATE_FIELDS.each do |field|
-      attribute field, :date
-    end
+    define_attributes STRING_FIELDS, :string
+    define_attributes DATE_FIELDS, :date
 
     def self.create(pet_parent_key, attributes)
       response = kb_client.request("#{pet_parent_key}/referrals", filters: attributes, method: :post)

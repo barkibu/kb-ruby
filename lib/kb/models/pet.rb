@@ -21,17 +21,9 @@ module KB
 
     define_attribute_methods(*FIELDS)
 
-    STRING_FIELDS.each do |field|
-      attribute field, :string
-    end
-
-    BOOLEAN_FIELDS.each do |field|
-      attribute field, :boolean
-    end
-
-    DATE_FIELDS.each do |field|
-      attribute field, :date
-    end
+    define_attributes STRING_FIELDS, :string
+    define_attributes DATE_FIELDS, :date
+    define_attributes BOOLEAN_FIELDS, :boolean
 
     def save!
       return unless changed?

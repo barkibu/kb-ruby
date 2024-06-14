@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    barkibu-kb (0.25.0)
+    barkibu-kb (0.26.0)
       activemodel (>= 4.0.2)
       activerecord
       activesupport (>= 3.0.0)
@@ -10,8 +10,8 @@ PATH
       faraday-http
       faraday_middleware
       i18n
-    barkibu-kb-fake (0.25.0)
-      barkibu-kb (= 0.25.0)
+    barkibu-kb-fake (0.26.0)
+      barkibu-kb (= 0.26.0)
       countries
       sinatra
       webmock

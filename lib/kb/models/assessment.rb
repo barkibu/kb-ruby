@@ -30,6 +30,9 @@ module KB
       end
     end
 
+    STRING_FIELDS = %i[key pet_key urgency].freeze
+    FIELDS = [*STRING_FIELDS, :date, :should_stop, :finished, :conditions, :symptoms, :next_question].freeze
+
     # Legacy Field Name From Anamnesis
     alias_attribute :consultation_id, :key
     alias_attribute :should_stop, :finished
@@ -42,12 +45,7 @@ module KB
     attribute :date, :datetime
     attribute :finished, :boolean, default: false
 
-    attribute :urgency, :string
-    attribute :key, :string
-    attribute :pet_key, :string
-
-    STRING_FIELDS = %i[key pet_key urgency].freeze
-    FIELDS = [*STRING_FIELDS, :date, :should_stop, :finished, :conditions, :symptoms, :next_question].freeze
+    define_attributes STRING_FIELDS, :string
 
     def urgent
       return false if urgency == 'low'

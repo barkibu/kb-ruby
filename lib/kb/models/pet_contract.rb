@@ -31,17 +31,9 @@ module KB
 
     define_attribute_methods(*FIELDS)
 
-    STRING_FIELDS.each do |field|
-      attribute field, :string
-    end
-
-    DATE_FIELDS.each do |field|
-      attribute field, :date
-    end
-
-    INTEGER_FIELDS.each do |field|
-      attribute field, :integer
-    end
+    define_attributes STRING_FIELDS, :string
+    define_attributes DATE_FIELDS, :date
+    define_attributes INTEGER_FIELDS, :integer
 
     def save!
       return unless changed?

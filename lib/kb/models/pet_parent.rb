@@ -41,8 +41,8 @@ module KB
 
     private_class_method :attributes_from_response
 
-    STRING_FIELDS = %i[key partner_name first_name last_name prefix_phone_number
-                       phone_number email country address zip_code nif affiliate_code city].freeze
+    STRING_FIELDS = %i[key partner_name first_name last_name prefix_phone_number phone_number email country address
+                       zip_code nif affiliate_code city iban_last4].freeze
     DATE_FIELDS = %i[birth_date deleted_at].freeze
     BOOLEAN_FIELDS = %i[phone_number_verified email_verified].freeze
     FIELDS = [*STRING_FIELDS, *DATE_FIELDS, *BOOLEAN_FIELDS].freeze
@@ -52,18 +52,9 @@ module KB
     alias phone_number_prefix prefix_phone_number
     alias phone_number_prefix= prefix_phone_number=
 
-    STRING_FIELDS.each do |field|
-      attribute field, :string
-    end
-
-    DATE_FIELDS.each do |field|
-      attribute field, :date
-    end
-
-    BOOLEAN_FIELDS.each do |field|
-      attribute field, :boolean
-    end
-
+    define_attributes STRING_FIELDS, :string
+    define_attributes DATE_FIELDS, :date
+    define_attributes BOOLEAN_FIELDS, :boolean
     attribute :first_name, :string, default: ''
 
     def save!
@@ -118,6 +109,19 @@ module KB
       self.class.kb_client.request("#{key}/referrers").map do |referral|
         Referral.from_api(referral)
       end
+    end
+
+    def iban
+      @iban ||= self.class.kb_client.request("#{key}/iban")['iban']
+    rescue Faraday::Error => e
+      raise KB::Error.from_faraday(e)
+    end
+
+    def update_iban(iban)
+      self.class.kb_client.request("#{key}/iban", filters: { iban: iban }, method: :put)
+      reload
+    rescue Faraday::Error => e
+      raise KB::Error.from_faraday(e)
     end
   end
 end

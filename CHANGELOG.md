@@ -6,7 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [unreleased]
-- See diff: https://github.com/barkibu/kb-ruby/compare/v0.25...HEAD
+- See diff: https://github.com/barkibu/kb-ruby/compare/v0.26...HEAD
+
+# [0.26.0]
+- Add `#iban` and `#update_iban` to `PetParent`
+- Add /iban endpoints in fake API
 
 # [0.25.0]
 - Add support for Ruby 3.2

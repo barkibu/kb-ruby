@@ -23,12 +23,7 @@ module KB
 
     attribute :purchasable, :boolean
 
-    STRING_FIELDS.each do |field|
-      attribute field, :string
-    end
-
-    STRING_ARRAY_FIELDS.each do |field|
-      attribute field, :array_of_strings
-    end
+    define_attributes STRING_FIELDS, :string
+    define_attributes STRING_ARRAY_FIELDS, :array_of_strings
   end
 end

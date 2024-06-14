@@ -74,6 +74,11 @@ KB.config.log_level = :debugger # :info by default
   - returns all the KB::Referral associated with this pet parent
 - `referrers`
   - returns all the KB::Referral associated with any of the pet parent's pets
+- `iban`
+  - returns the IBAN of the pet parent
+- `update_iban`
+  - arg: `iban` string
+  - updates the IBAN of the pet parent and reloads the entity
 
 #### Assessment 📄
 
