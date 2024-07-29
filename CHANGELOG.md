@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [unreleased]
 - See diff: https://github.com/barkibu/kb-ruby/compare/v0.26...HEAD
 
+# [0.27.0]
+- Add configuration option for request timeout
+
 # [0.26.0]
 - Add `#iban` and `#update_iban` to `PetParent`
 - Add /iban endpoints in fake API
