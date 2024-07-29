@@ -17,6 +17,10 @@ module KB
   end
 
   setting :log_level, default: :info
+
+  setting :request do
+    setting :timeout, default: 5
+  end
 end
 
 require 'kb/inflections'
