@@ -74,7 +74,9 @@ module KB
     end
 
     def connection
-      @connection ||= Faraday.new(url: base_url, headers: headers) do |conn|
+      @connection ||= Faraday.new(url: base_url,
+                                  headers: headers,
+                                  request: { timeout: KB.config.request.timeout }) do |conn|
         conn.response :json
         conn.response :raise_error
         if KB.config.log_level == :debugger

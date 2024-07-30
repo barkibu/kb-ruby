@@ -42,6 +42,12 @@ KB.config.cache.expires_in = 1.second # 0 by default
 KB.config.log_level = :debugger # :info by default
 ```
 
+#### Request timeout configuration
+```ruby
+# config/initializers/kb_ruby.rb
+KB.config.request.timeout = 10 # 5 by default
+```
+
 ### Exposed Entities
 
 #### Pet Parent 🧍🏾
