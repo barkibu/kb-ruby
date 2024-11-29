@@ -60,11 +60,5 @@ module KB
     def pet
       @pet ||= Pet.find(pet_key)
     end
-
-    def hubspot_id
-      @hubspot_id ||= KB::HubspotRelationship.find('policies', key).hubspot_id
-    rescue KB::ResourceNotFound
-      nil
-    end
   end
 end
