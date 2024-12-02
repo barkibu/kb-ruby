@@ -19,28 +19,6 @@ RSpec.describe KB::PetContract do
     end
   end
 
-  describe '#hubspot_id' do
-    subject(:hubspot_id) { described_class.new.hubspot_id }
-
-    let(:hubspot_relationship) { KB::HubspotRelationship.new(hubspot_id: '90872363') }
-
-    it 'returns the hubspot_id from the relationship' do
-      allow(KB::HubspotRelationship).to receive(:find).and_return(hubspot_relationship)
-
-      expect(hubspot_id).to eq '90872363'
-    end
-
-    context 'when there is no relationship' do
-      before do
-        allow(KB::HubspotRelationship).to receive(:find).and_raise(KB::ResourceNotFound)
-      end
-
-      it 'returns nil' do
-        expect(hubspot_id).to eq nil
-      end
-    end
-  end
-
   describe '==' do
     it 'returns true for two contracts with the same key' do
       contract1 = described_class.new(key: 'test')

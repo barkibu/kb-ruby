@@ -3,17 +3,15 @@ require 'kb/fake/bounded_context/pet_family/pet_parents'
 require 'kb/fake/bounded_context/pet_family/pets'
 require 'kb/fake/bounded_context/pet_family/products'
 require 'kb/fake/bounded_context/pet_family/pet_contracts'
-require 'kb/fake/bounded_context/pet_family/hubspot_relationship'
 
 module KB
   module Fake
     class ApiState
-      attr_accessor :petparents, :pets, :consultations, :petcontracts, :plans, :breeds, :products,
-                    :hubspot_relationship, :referrals
+      attr_accessor :petparents, :pets, :consultations, :petcontracts, :plans, :breeds, :products, :referrals
 
       # rubocop:disable Metrics/ParameterLists
       def initialize(petparents: [], pets: [], consultations: [], petcontracts: [], plans: [], breeds: [],
-                     products: [], hubspot_relationship: [], referrals: [])
+                     products: [], referrals: [])
         @petparents = petparents
         @pets = pets
         @consultations = consultations
@@ -21,7 +19,6 @@ module KB
         @plans = plans
         @breeds = breeds
         @products = products
-        @hubspot_relationship = hubspot_relationship
         @referrals = referrals
       end
       # rubocop:enable Metrics/ParameterLists
@@ -35,7 +32,6 @@ module KB
           plans: @plans.clone,
           breeds: @breeds.clone,
           products: @products.clone,
-          hubspot_relationship: @hubspot_relationship.clone,
           referrals: @referrals.clone
         }
       end
@@ -47,7 +43,6 @@ module KB
       include BoundedContext::PetFamily::PetParents
       include BoundedContext::PetFamily::PetContracts
       include BoundedContext::PetFamily::Products
-      include BoundedContext::PetFamily::HubspotRelationship
 
       set :state, ApiState.new
 
