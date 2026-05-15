@@ -19,3 +19,4 @@
 # intellij
 /.idea
 .env
+.claude/worktrees/
