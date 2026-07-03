@@ -34,7 +34,7 @@ Gem::Specification.new do |spec|
   spec.bindir        = 'exe'
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
-  spec.required_ruby_version = '>= 2.6', '< 3.3'
+  spec.required_ruby_version = '>= 2.6', '< 3.6'
 
   spec.add_dependency 'dry-configurable', '~> 0.9'
   spec.add_development_dependency 'bundler'
@@ -44,6 +44,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rubocop'
   spec.add_development_dependency 'rubocop-rspec'
   spec.add_development_dependency 'simplecov'
+  spec.add_development_dependency 'base64'
+  spec.add_development_dependency 'bigdecimal'
   spec.add_development_dependency 'webmock'
   spec.add_runtime_dependency 'activemodel', '>= 4.0.2'
   spec.add_runtime_dependency 'activerecord'
