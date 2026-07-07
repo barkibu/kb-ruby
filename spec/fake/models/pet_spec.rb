@@ -62,4 +62,40 @@ RSpec.describe KB::Pet do
       end
     end
   end
+
+  describe '.transfer' do
+    let(:source_parent) { KB::PetParent.create({}) }
+    let(:destination_parent) { KB::PetParent.create({}) }
+    let(:pet) { described_class.create(name: 'Buddy', pet_parent_key: source_parent[:key]) }
+
+    context 'when the pet and destination parent exist' do
+      it 'reassigns the pet to the destination parent' do
+        described_class.transfer(pet_key: pet[:key], destination_pet_parent_key: destination_parent[:key])
+        expect(described_class.find(pet[:key]).pet_parent_key).to eq(destination_parent[:key])
+      end
+    end
+
+    context 'when the destination is the current parent (self-transfer)' do
+      it 'does not change the pet parent' do
+        described_class.transfer(pet_key: pet[:key], destination_pet_parent_key: source_parent[:key])
+        expect(described_class.find(pet[:key]).pet_parent_key).to eq(source_parent[:key])
+      end
+    end
+
+    context 'when the pet does not exist' do
+      it 'raises KB::ResourceNotFound' do
+        expect do
+          described_class.transfer(pet_key: 'missing-key', destination_pet_parent_key: destination_parent[:key])
+        end.to raise_error(KB::ResourceNotFound)
+      end
+    end
+
+    context 'when the destination parent does not exist' do
+      it 'raises KB::UnprocessableEntityError' do
+        expect do
+          described_class.transfer(pet_key: pet[:key], destination_pet_parent_key: 'missing-parent-key')
+        end.to raise_error(KB::UnprocessableEntityError)
+      end
+    end
+  end
 end

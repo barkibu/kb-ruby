@@ -51,6 +51,14 @@ module KB
       freeze
     end
 
+    def self.transfer(pet_key:, destination_pet_parent_key:)
+      kb_client.request('transfer', filters: { pet_key: pet_key,
+                                               destination_pet_parent_key: destination_pet_parent_key },
+                                    method: :post)
+    rescue Faraday::Error => e
+      raise KB::Error.from_faraday(e)
+    end
+
     def contracts
       self.class.kb_client.request("#{key}/contracts").map do |contract|
         PetContract.from_api(contract)
