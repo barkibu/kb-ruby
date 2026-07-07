@@ -45,6 +45,21 @@ module BoundedContext
           json_response 200, contracts
         end
 
+        post '/v1/pets/transfer' do
+          body = JSON.parse(request.body.read)
+          pet = find_resource(:pets, body['petKey'])
+          return json_response 404, {} if pet.nil?
+
+          destination_parent = find_resource(:petparents, body['destinationPetParentKey'])
+          return json_response 422, {} if destination_parent.nil?
+
+          unless pet['petParentKey'] == body['destinationPetParentKey']
+            update_resource_state(:pets, pet.merge('petParentKey' => body['destinationPetParentKey']))
+          end
+
+          json_response 204, nil
+        end
+
         put '/v1/pets' do
           params = JSON.parse(request.body.read)
           pet_parent = find_resource(:petparents, params['petParentKey'])

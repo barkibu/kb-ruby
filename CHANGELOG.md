@@ -6,7 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [unreleased]
-- See diff: https://github.com/barkibu/kb-ruby/compare/v0.29.0...HEAD
+- See diff: https://github.com/barkibu/kb-ruby/compare/v0.30.0...HEAD
+
+## [0.30.0]
+- Add `KB::Pet.transfer` to call `POST /v1/pets/transfer`; add fake API route
 
 ## [0.29.0]
 - Add `created_at` field to PetParent DATE_FIELDS
