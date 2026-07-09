@@ -6,7 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [unreleased]
-- See diff: https://github.com/barkibu/kb-ruby/compare/v0.31.0...HEAD
+- See diff: https://github.com/barkibu/kb-ruby/compare/v0.32.0...HEAD
+
+## [0.32.0]
+- Allow Ruby 3.3/3.4: raise `required_ruby_version` ceiling to `< 3.6` (floor stays `>= 2.6`)
+- Test-env only: add `base64`/`bigdecimal` dev dependencies and an `activesupport >= 7.1` floor (suite now also validated against ActiveSupport 8). Runtime constraints for consumers unchanged.
 
 ## [0.31.0]
 - Add `KB::Pet#pet_parent`, a memoized lookup via `PetParent.find`
