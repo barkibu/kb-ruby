@@ -98,4 +98,15 @@ RSpec.describe KB::Pet do
       end
     end
   end
+
+  describe '#pet_parent' do
+    subject(:pet_parent) { described_class.find(pet[:key]).pet_parent }
+
+    let(:existing_pet_parent) { KB::PetParent.create({}) }
+    let(:pet) { described_class.create(name: 'Buddy', pet_parent_key: existing_pet_parent[:key]) }
+
+    it 'returns the pet parent the pet belongs to' do
+      expect(pet_parent.key).to eq(existing_pet_parent[:key])
+    end
+  end
 end
