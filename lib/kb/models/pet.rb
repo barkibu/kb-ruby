@@ -64,5 +64,9 @@ module KB
         PetContract.from_api(contract)
       end
     end
+
+    def pet_parent
+      @pet_parent ||= PetParent.find(pet_parent_key)
+    end
   end
 end

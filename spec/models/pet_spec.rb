@@ -45,4 +45,25 @@ RSpec.describe KB::Pet do
       it { expect { transfer }.to raise_error(KB::UnprocessableEntityError) }
     end
   end
+
+  describe '#pet_parent' do
+    subject(:pet) { described_class.new(key: pet_key, pet_parent_key: pet_parent_key) }
+
+    let(:pet_parent_key) { 'parent-uuid-456' }
+    let(:pet_parent_url) { "https://test_api_barkkb.com/v1/petparents/#{pet_parent_key}" }
+
+    before do
+      stub_request(:get, pet_parent_url)
+        .to_return(status: 200, body: { key: pet_parent_key }.to_json)
+    end
+
+    it 'returns the pet parent' do
+      expect(pet.pet_parent).to have_attributes(key: pet_parent_key)
+    end
+
+    it 'memoizes the lookup' do
+      2.times { pet.pet_parent }
+      expect(a_request(:get, pet_parent_url)).to have_been_made.once
+    end
+  end
 end
