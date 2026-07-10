@@ -15,7 +15,7 @@ jobs:
           git config user.name 'Barkibot'
           git config user.email 'dev+bot@barkibu.com'
       - name: Release Gem
-        uses: discourse/publish-rubygems-action@v2
+        uses: discourse/publish-rubygems-action@v3
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           RUBYGEMS_API_KEY: ${{secrets.RUBYGEMS_API_KEY}}
