@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.32.0]
 - Allow Ruby 3.3/3.4: raise `required_ruby_version` ceiling to `< 3.6` (floor stays `>= 2.6`)
+- No runtime dependency changes — safe to take with a scoped conservative update (`bundle lock --update barkibu-kb barkibu-kb-fake --conservative`)
 - Test-env only: add `base64`/`bigdecimal` dev dependencies and an `activesupport >= 7.1` floor (suite now also validated against ActiveSupport 8). Runtime constraints for consumers unchanged.
 
 ## [0.31.0]
