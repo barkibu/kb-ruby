@@ -34,6 +34,27 @@ RSpec.describe KB::Concerns::AsKBWrapper do
       it 'returns a fresh KB resource if not found' do
         expect(instance.kb_model).to be kb_model_new_instance
       end
+
+      it 'instruments a kb.resource_not_found event with wrapper class, kb model and kb_key' do # rubocop:disable RSpec/ExampleLength, RSpec/MultipleExpectations
+        payload = nil
+        subscription = ActiveSupport::Notifications.subscribe('kb.resource_not_found') do |*args|
+          event = ActiveSupport::Notifications::Event.new(*args)
+          payload = event.payload
+        end
+
+        begin
+          instance.kb_model
+        ensure
+          ActiveSupport::Notifications.unsubscribe(subscription)
+        end
+
+        expect(payload).to include(
+          wrapper_class: model_class.name,
+          kb_model: kb_model_class.name,
+          kb_key: kb_key
+        )
+        expect(payload[:error]).to be_a(KB::ResourceNotFound)
+      end
     end
   end
 end

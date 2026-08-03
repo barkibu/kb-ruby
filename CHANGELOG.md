@@ -6,7 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [unreleased]
-- See diff: https://github.com/barkibu/kb-ruby/compare/v0.32.0...HEAD
+- See diff: https://github.com/barkibu/kb-ruby/compare/v0.33.0...HEAD
+
+## [0.33.0]
+- Instrument the silent `KB::ResourceNotFound` rescue in `AsKBWrapper#kb_model`: emits an `ActiveSupport::Notifications` event `kb.resource_not_found` with `wrapper_class`, `kb_model`, `kb_key` and the original `error` before returning the empty fallback object. Consumers (e.g. connectedhealth-backend) can subscribe to log/alert on this event to observe stale `kb_key`s instead of silently serving nil-filled records. No behavior change — the rescue still returns a fresh, empty model instance.
 
 ## [0.32.0]
 - Allow Ruby 3.3/3.4: raise `required_ruby_version` ceiling to `< 3.6` (floor stays `>= 2.6`)

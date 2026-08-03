@@ -33,7 +33,14 @@ module KB
             if underlying_kb_entity.blank?
               underlying_kb_entity = begin
                 model.find kb_key
-              rescue KB::ResourceNotFound
+              rescue KB::ResourceNotFound => e
+                ActiveSupport::Notifications.instrument(
+                  'kb.resource_not_found',
+                  wrapper_class: self.class.name,
+                  kb_model: model.name,
+                  kb_key: kb_key,
+                  error: e
+                )
                 model.new
               end
 
