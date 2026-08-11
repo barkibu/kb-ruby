@@ -19,7 +19,9 @@ module KB
   setting :log_level, default: :info
 
   setting :request do
-    setting :timeout, default: 5
+    setting :connect_timeout, default: 1
+    setting :write_timeout, default: 3
+    setting :read_timeout, default: 5
   end
 end
 
@@ -28,6 +30,7 @@ require 'kb/inflections'
 require 'kb/cache'
 require 'kb/client_resolver'
 require 'kb/errors'
+require 'kb/faraday_adapter'
 require 'kb/client'
 
 require 'kb/concerns'

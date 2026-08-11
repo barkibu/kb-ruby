@@ -74,9 +74,7 @@ module KB
     end
 
     def connection
-      @connection ||= Faraday.new(url: base_url,
-                                  headers: headers,
-                                  request: { timeout: KB.config.request.timeout }) do |conn|
+      @connection ||= Faraday.new(url: base_url, headers: headers) do |conn|
         conn.response :json
         conn.response :raise_error
         if KB.config.log_level == :debugger
@@ -84,7 +82,7 @@ module KB
             logger.filter(/(X-api-key:\s)("\w+")/, '\1[API_KEY_SCRUBBED]')
           end
         end
-        conn.adapter :http
+        conn.adapter KB::FaradayAdapter
       end
     end
   end
