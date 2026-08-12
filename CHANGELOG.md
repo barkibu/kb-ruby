@@ -6,9 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [unreleased]
-- See diff: https://github.com/barkibu/kb-ruby/compare/v0.33.0...HEAD
+- See diff: https://github.com/barkibu/kb-ruby/compare/v1.0.0...HEAD
 
-## [0.33.0]
+## [1.0.0]
 - [Breaking changes] Split the single global request timeout into per-phase budgets: `KB.config.request.connect_timeout` (default 1s, also bounds the TLS handshake), `write_timeout` (default 3s), `read_timeout` (default 5s). `KB.config.request.timeout` is removed — assigning it now raises `NoMethodError` at boot. Migration: a previous global `timeout` maps to `read_timeout` (e.g. `KB_REQUEST_TIMEOUT_SECONDS=12` → `read_timeout = 12`); keep the three values distinct so the failing phase stays identifiable from the error message.
 - Timeout expiries now raise phase-specific errors (`HTTP::ConnectTimeoutError` for TCP connect; "Read/Write timed out after N seconds" messages for TLS/read/write) instead of a single undifferentiated `HTTP::TimeoutError`. Faraday-level wrapping (`Faraday::TimeoutError`/`ConnectionFailed`/`SSLError`) is unchanged.
 - There is no total request budget anymore; the read timeout applies per socket read, so worst-case wall clock is no longer capped by a single number.
