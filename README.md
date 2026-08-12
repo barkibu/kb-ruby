@@ -44,14 +44,15 @@ KB.config.log_level = :debugger # :info by default
 
 #### Request timeout configuration
 
-Timeouts are per phase. Keep the values distinct: http.rb embeds the expired
-budget in the error message ("timed out after N seconds"), and the TLS
-handshake reuses the connect budget — distinct numbers are what make the
-failing phase identifiable from the error alone.
+Timeouts are per phase, and each phase fails with its own error class:
+`connect_timeout` maps to Net::HTTP's `open_timeout`, bounding TCP connect plus
+the TLS handshake (`Net::OpenTimeout`); `read_timeout` bounds the wait for the
+response (`Net::ReadTimeout`); `write_timeout` bounds sending the request
+(`Net::WriteTimeout`).
 
 ```ruby
 # config/initializers/kb_ruby.rb
-KB.config.request.connect_timeout = 2 # 1 by default; also bounds the TLS handshake
+KB.config.request.connect_timeout = 2 # 1 by default; TCP connect + TLS handshake
 KB.config.request.write_timeout = 4   # 3 by default
 KB.config.request.read_timeout = 10   # 5 by default
 ```

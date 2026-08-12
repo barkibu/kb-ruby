@@ -9,9 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - See diff: https://github.com/barkibu/kb-ruby/compare/v1.0.0...HEAD
 
 ## [1.0.0]
-- [Breaking changes] Split the single global request timeout into per-phase budgets: `KB.config.request.connect_timeout` (default 1s, also bounds the TLS handshake), `write_timeout` (default 3s), `read_timeout` (default 5s). `KB.config.request.timeout` is removed — assigning it now raises `NoMethodError` at boot. Migration: a previous global `timeout` maps to `read_timeout` (e.g. `KB_REQUEST_TIMEOUT_SECONDS=12` → `read_timeout = 12`); keep the three values distinct so the failing phase stays identifiable from the error message.
-- Timeout expiries now raise phase-specific errors (`HTTP::ConnectTimeoutError` for TCP connect; "Read/Write timed out after N seconds" messages for TLS/read/write) instead of a single undifferentiated `HTTP::TimeoutError`. Faraday-level wrapping (`Faraday::TimeoutError`/`ConnectionFailed`/`SSLError`) is unchanged.
-- There is no total request budget anymore; the read timeout applies per socket read, so worst-case wall clock is no longer capped by a single number.
+- [Breaking changes] Split the single global request timeout into per-phase budgets: `KB.config.request.connect_timeout` (default 1s, bounds TCP connect + TLS handshake), `write_timeout` (default 3s), `read_timeout` (default 5s). `KB.config.request.timeout` is removed — assigning it now raises `NoMethodError` at boot. Migration: a previous global `timeout` maps to `read_timeout` (e.g. `KB_REQUEST_TIMEOUT_SECONDS=12` → `read_timeout = 12`).
+- [Breaking changes] Switch the HTTP adapter from http.rb (`faraday-http`) to Net::HTTP (`faraday-net_http`) — the stock adapter honours all three phase timeouts, aligns the KB client with the rest of our outbound HTTP, and opens a one-line upgrade path to `faraday-net_http_persistent` for connection reuse. Raw error classes change accordingly (`Net::OpenTimeout`/`Net::ReadTimeout`/`Net::WriteTimeout`/`Errno::*` instead of `HTTP::*`) — relevant to APM span queries on `error.type`.
+- Faraday-level wrapping keeps the same three classes (`Faraday::TimeoutError`/`ConnectionFailed`/`SSLError`) with one movement between them: a connect/TLS-phase expiry now surfaces as `Faraday::ConnectionFailed` (was `Faraday::TimeoutError`), making `ConnectionFailed` cleanly mean "the request never got through the pipe".
+- Net::HTTP's idempotent auto-retry stays disabled (`max_retries = 0`, enforced by the adapter and pinned by a spec) — no behaviour change vs. the previous no-retry client.
+- There is no total request budget anymore; worst-case wall clock is the sum of the phase budgets rather than a single number.
 
 ## [0.32.0]
 - Allow Ruby 3.3/3.4: raise `required_ruby_version` ceiling to `< 3.6` (floor stays `>= 2.6`)
