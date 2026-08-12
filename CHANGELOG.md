@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Faraday-level wrapping keeps the same three classes (`Faraday::TimeoutError`/`ConnectionFailed`/`SSLError`) with one movement between them: a connect/TLS-phase expiry now surfaces as `Faraday::ConnectionFailed` (was `Faraday::TimeoutError`), making `ConnectionFailed` cleanly mean "the request never got through the pipe".
 - Net::HTTP's idempotent auto-retry stays disabled (`max_retries = 0`, enforced by the adapter and pinned by a spec) — no behaviour change vs. the previous no-retry client.
 - There is no total request budget anymore; worst-case wall clock is the sum of the phase budgets rather than a single number.
+- barkibu-kb-fake: disable Sinatra's host authorization (`set :host_authorization, permitted_hosts: []`). Sinatra >= 4.1 authorizes the Host header and, when it infers a development environment, only permits localhost-style hosts — rejecting requests to the stubbed KB host with `403 Host not permitted`. Permitting the host on the consumer side stops working with the net_http adapter, because WebMock intercepts before Net::HTTP adds the Host header, so the header is absent and can never match a permitted list. Consumers can drop their own `set :host_authorization` workarounds.
 
 ## [0.32.0]
 - Allow Ruby 3.3/3.4: raise `required_ruby_version` ceiling to `< 3.6` (floor stays `>= 2.6`)
