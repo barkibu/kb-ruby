@@ -44,6 +44,16 @@ module KB
       include BoundedContext::PetFamily::PetContracts
       include BoundedContext::PetFamily::Products
 
+      # Sinatra >= 4.1 ships Rack::Protection::HostAuthorization, which authorizes
+      # on the Host header and, when it infers a development environment, only
+      # permits localhost-style hosts — rejecting requests addressed to the
+      # stubbed KB host with "403 Host not permitted". Permitting specific hosts
+      # on the consumer side is no fix either: with the net_http adapter WebMock
+      # intercepts before Net::HTTP adds the Host header, so the header is absent
+      # and can never match a permitted list. An empty list disables the check;
+      # it guards against DNS rebinding, which cannot apply to an in-process fake.
+      set :host_authorization, permitted_hosts: []
+
       set :state, ApiState.new
 
       def self.snapshot
