@@ -5,7 +5,6 @@ require 'active_support'
 require 'active_support/core_ext/array'
 require 'faraday'
 require 'faraday_middleware'
-require 'faraday/http'
 require 'dry/configurable'
 
 module KB
@@ -19,7 +18,9 @@ module KB
   setting :log_level, default: :info
 
   setting :request do
-    setting :timeout, default: 5
+    setting :connect_timeout, default: 1
+    setting :write_timeout, default: 3
+    setting :read_timeout, default: 5
   end
 end
 
