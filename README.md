@@ -18,6 +18,15 @@ Or install it yourself as:
 
     $ gem install kb
 
+## Development
+
+Specs and RuboCop run on every pull request (`.github/workflows/ci.yml`) on Ruby 3.4. Locally:
+
+```sh
+docker compose run --rm kb bundle exec rspec
+docker compose run --rm kb bundle exec rubocop lib spec
+```
+
 ## Usage
 
 This gem wraps the Knowledge Base Api and exposes CRUD-_able_ entities into the requiring application.
