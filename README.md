@@ -66,6 +66,14 @@ KB.config.request.write_timeout = 4   # 3 by default
 KB.config.request.read_timeout = 10   # 5 by default
 ```
 
+The read budget can be raised for a single call through `KB::Client#request`, for
+the few endpoints whose server-side work legitimately runs for seconds. Connect
+and write budgets stay global:
+
+```ruby
+KB::Pet.kb_client.request('birthdays', filters: { month: 9, day: 22, size: 1000 }, read_timeout: 30)
+```
+
 ### Exposed Entities
 
 #### Pet Parent 🧍🏾

@@ -208,5 +208,56 @@ RSpec.describe KB::Client do
       end
     end
   end
+
+  describe '#request' do
+    let(:api_response) { [200, { 'Content-Type': 'application/json' }, { elements: [] }.to_json] }
+    let(:sub_path) { 'birthdays' }
+    let(:filters) { { month: 9, day: 22 } }
+
+    it 'launches a GET request on the sub path with filters as params' do
+      stubs.get("#{path}/#{sub_path}") do |env|
+        expect(env.params).to include filters.transform_keys(&:to_s).transform_values(&:to_s)
+        api_response
+      end
+      client.request(sub_path, filters: filters)
+      stubs.verify_stubbed_calls
+    end
+
+    it 'uses the global read timeout by default' do
+      stubs.get("#{path}/#{sub_path}") do |env|
+        expect(env.request.read_timeout).to eq KB.config.request.read_timeout
+        api_response
+      end
+      client.request(sub_path, filters: filters)
+    end
+
+    it 'overrides only the read timeout for that call when given' do
+      stubs.get("#{path}/#{sub_path}") do |env|
+        expect(
+          open: env.request.open_timeout, write: env.request.write_timeout, read: env.request.read_timeout
+        ).to eq(open: KB.config.request.connect_timeout, write: KB.config.request.write_timeout, read: 30)
+        api_response
+      end
+      client.request(sub_path, filters: filters, read_timeout: 30)
+    end
+
+    it 'does not leak the override into later calls' do
+      stubs.get("#{path}/#{sub_path}") { |_env| api_response }
+      client.request(sub_path, filters: filters, read_timeout: 30)
+      stubs.get("#{path}/other") do |env|
+        expect(env.request.read_timeout).to eq KB.config.request.read_timeout
+        api_response
+      end
+      client.request('other')
+    end
+
+    it 'passes the override on non-GET requests too' do
+      stubs.post("#{path}/#{sub_path}") do |env|
+        expect(env.request.read_timeout).to eq 30
+        api_response
+      end
+      client.request(sub_path, filters: filters, method: :post, read_timeout: 30)
+    end
+  end
 end
 # rubocop:enable RSpec/MultipleMemoizedHelpers

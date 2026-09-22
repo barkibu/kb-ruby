@@ -7,12 +7,16 @@ module KB
       @base_url = base_url
     end
 
-    def request(sub_path, filters: nil, method: :get)
-      return connection.public_send(method, sub_path, attributes_to_json(filters)).body if method != :get
+    # `read_timeout` overrides KB.config.request.read_timeout for this one call only,
+    # for the few endpoints whose server-side work legitimately runs for seconds
+    # (e.g. GET /v1/pets/birthdays). Connect and write budgets stay global.
+    def request(sub_path, filters: nil, method: :get, read_timeout: nil)
+      options = request_options(read_timeout)
+      return connection.public_send(method, sub_path, attributes_to_json(filters), &options).body if method != :get
 
       cache_key = "#{@base_url}/#{sub_path}/#{(filters || {}).sort.to_h}"
       KB::Cache.fetch(cache_key) do
-        connection.public_send(method, sub_path, filters).body
+        connection.public_send(method, sub_path, filters, &options).body
       end
     end
 
@@ -84,6 +88,12 @@ module KB
         end
         conn.adapter :net_http
       end
+    end
+
+    def request_options(read_timeout)
+      return nil if read_timeout.nil?
+
+      ->(req) { req.options.read_timeout = read_timeout }
     end
 
     def request_timeouts
