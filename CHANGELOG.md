@@ -6,7 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [unreleased]
-- See diff: https://github.com/barkibu/kb-ruby/compare/v1.0.0...HEAD
+- See diff: https://github.com/barkibu/kb-ruby/compare/v1.1.0...HEAD
+
+## [1.1.0]
+- Add `read_timeout:` to `KB::Client#request` to raise the read budget for a single call (e.g. `GET /v1/pets/birthdays`, whose server-side work runs for seconds). Connect and write budgets stay global; the override does not leak into later calls on the same connection.
 
 ## [1.0.0]
 - [Breaking changes] Split the single global request timeout into per-phase budgets: `KB.config.request.connect_timeout` (default 1s, bounds TCP connect + TLS handshake), `write_timeout` (default 3s), `read_timeout` (default 5s). `KB.config.request.timeout` is removed — assigning it now raises `NoMethodError` at boot. Migration: a previous global `timeout` maps to `read_timeout` (e.g. `KB_REQUEST_TIMEOUT_SECONDS=12` → `read_timeout = 12`).
