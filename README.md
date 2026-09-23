@@ -87,13 +87,20 @@ request can have reached KB (`KB::RetryPolicy`):
 | HTTP 4xx/5xx | never |
 
 PUT and DELETE are not retried on "maybe sent" failures: `upsert` and
-`PetParent#merge!` are PUTs whose second run is not a no-op on KB's side.
+`PetParent#merge!` are PUTs whose second run is not a no-op on KB's side, and a
+repeated DELETE would turn a success into a 404. A call that raised its own read
+budget (`read_timeout:` on `KB::Client#request`) is not retried on "maybe sent"
+failures either, so a 30s birthdays read can't become 60s; failures that never
+reached KB are still retried.
 
 ```ruby
 # config/initializers/kb_ruby.rb
 KB.config.request.retries = 1          # default; 0 disables retries
 KB.config.request.retry_interval = 0.1 # default, seconds; each wait is 1x-2x this
 ```
+
+Like the timeouts, these are read when a client builds its connection, i.e. on
+its first call, so set them in an initializer.
 
 Worst case, a call now takes two attempts' worth of phase budgets plus the
 interval, e.g. a GET that read-times-out twice takes about 2 x (1 + 3 + 5)s with

@@ -1,5 +1,6 @@
 require 'socket'
 require 'net/http'
+require 'faraday/retry'
 
 module KB
   # Decides which failed KB calls the client retries.
@@ -12,9 +13,12 @@ module KB
   # - never sent: TCP connect / TLS handshake did not complete, so KB cannot have
   #   seen the request. Safe to retry for every verb, POST included.
   # - maybe sent: anything else the transport raises (read/write timeout, reset,
-  #   EOF, TLS error mid-stream). KB may have processed it, so only GET is retried.
-  #   PUT/DELETE are left out on purpose: `upsert` and `merge!` are PUTs whose
-  #   second run is not a no-op on KB's side.
+  #   EOF, TLS error mid-stream). KB may have processed it, so only GET/HEAD are
+  #   retried. PUT/DELETE are left out on purpose: `upsert` and `merge!` are PUTs
+  #   whose second run is not a no-op on KB's side, and a repeated DELETE would
+  #   turn a success into a 404.
+  #   A call that raised its own read budget (`read_timeout:`, e.g. 30s for
+  #   birthdays) is not retried on these either, so its worst case isn't doubled.
   #
   # HTTP responses (4xx/5xx) are never retried: KB answered.
   module RetryPolicy
@@ -32,10 +36,10 @@ module KB
 
     module_function
 
-    def retry?(verb, error)
+    def retry?(verb, error, own_read_budget: false)
       return false unless TRANSPORT_ERRORS.any? { |klass| error.is_a?(klass) }
 
-      not_sent?(error) || MAYBE_SENT_VERBS.include?(verb)
+      not_sent?(error) || (MAYBE_SENT_VERBS.include?(verb) && !own_read_budget)
     end
 
     def not_sent?(error)
@@ -55,15 +59,19 @@ module KB
         interval_randomness: 1, # 1x-2x the interval, so a burst of callers doesn't retry in lockstep
         exceptions: TRANSPORT_ERRORS,
         methods: [], # always ask retry_if
-        retry_if: ->(env, error) { retry?(env[:method], error) },
+        retry_if: lambda do |env, error|
+          retry?(env[:method], error, own_read_budget: env[:request].context&.dig(:kb_own_read_budget))
+        end,
         retry_block: ->(env, _options, _retries_left, error) { record(env, error) }
       }
     end
 
-    # Hands the request.kb_client event payload to the middleware through the
-    # request context, so each retry is reported on the call's own event.
-    def track(request, event)
-      request.options.context = { kb_event: event }
+    # Hands the request.kb_client event payload (and whether the call set its own
+    # read budget) to the middleware through the request context, so each retry
+    # is reported on the call's own event.
+    def track(request, event, read_timeout = nil)
+      tracking = { kb_event: event, kb_own_read_budget: !read_timeout.nil? }
+      request.options.context = (request.options.context || {}).merge(tracking)
     end
 
     def record(env, error)

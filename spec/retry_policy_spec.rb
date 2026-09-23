@@ -26,4 +26,16 @@ RSpec.describe KB::RetryPolicy do
       expect(verbs.to_h { |verb| [verb, described_class.retry?(verb, error)] }).to eq(expected)
     end
   end
+
+  context 'when the call set its own read budget' do
+    it 'still retries a failure that never reached KB' do
+      error = Faraday::ConnectionFailed.new(Net::OpenTimeout.new)
+      expect(described_class.retry?(:get, error, own_read_budget: true)).to be true
+    end
+
+    it 'does not retry a read timeout, so the raised budget is not doubled' do
+      error = Faraday::TimeoutError.new(Net::ReadTimeout.new)
+      expect(described_class.retry?(:get, error, own_read_budget: true)).to be false
+    end
+  end
 end

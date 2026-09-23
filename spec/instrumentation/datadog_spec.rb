@@ -204,7 +204,7 @@ RSpec.describe KB::Instrumentation::Datadog do
       client.find('k')
 
       expect(
-        status: last_span.status, retries: last_span.get_metric('kb.retries') || last_span.get_tag('kb.retries'),
+        status: last_span.status, retries: last_span.get_metric('kb.retries'),
         errors: last_span.get_tag('kb.retry_errors')
       ).to eq(status: 0, retries: 1, errors: 'Net::OpenTimeout')
     end
