@@ -1,5 +1,10 @@
 module KB
   class Client
+    # Emitted once per KB call, wrapping cache lookup and the HTTP request.
+    # Payload: verb, path, base_url, cache_hit (GET only), status (when a response arrived),
+    # plus ActiveSupport's exception/exception_object when the call raised.
+    REQUEST_EVENT = 'request.kb_client'.freeze
+
     attr_reader :api_key, :base_url
 
     def initialize(base_url, api_key: ENV['KB_API_KEY'])
@@ -11,47 +16,38 @@ module KB
     # for the few endpoints whose server-side work legitimately runs for seconds
     # (e.g. GET /v1/pets/birthdays). Connect and write budgets stay global.
     def request(sub_path, filters: nil, method: :get, read_timeout: nil)
-      options = request_options(read_timeout)
-      return connection.public_send(method, sub_path, attributes_to_json(filters), &options).body if method != :get
+      return perform(method, sub_path, attributes_to_json(filters), read_timeout: read_timeout) if method != :get
 
       cache_key = "#{@base_url}/#{sub_path}/#{(filters || {}).sort.to_h}"
-      KB::Cache.fetch(cache_key) do
-        connection.public_send(method, sub_path, filters, &options).body
-      end
+      perform(:get, sub_path, filters, cache_key: cache_key, read_timeout: read_timeout)
     end
 
     def all(filters = {})
-      cache_key = "#{@base_url}/#{filters.sort.to_h}"
-
-      KB::Cache.fetch(cache_key) do
-        connection.get('', attributes_case_transform(filters)).body
-      end
+      perform(:get, '', attributes_case_transform(filters), cache_key: "#{@base_url}/#{filters.sort.to_h}")
     end
 
     def find(key, params = {})
       raise Faraday::ResourceNotFound, {} if key.blank?
 
-      KB::Cache.fetch("#{@base_url}/#{key}") do
-        connection.get(key, attributes_case_transform(params)).body
-      end
+      perform(:get, key, attributes_case_transform(params), cache_key: "#{@base_url}/#{key}")
     end
 
     def create(attributes)
-      connection.post('', attributes_to_json(attributes)).body
+      perform(:post, '', attributes_to_json(attributes))
     end
 
     def update(key, attributes)
       clear_cache_for(key)
-      connection.patch(key.to_s, attributes_to_json(attributes)).body
+      perform(:patch, key.to_s, attributes_to_json(attributes))
     end
 
     def destroy(key)
       clear_cache_for(key)
-      connection.delete(key.to_s).body
+      perform(:delete, key.to_s)
     end
 
     def upsert(attributes)
-      connection.put('', attributes_to_json(attributes)).body
+      perform(:put, '', attributes_to_json(attributes))
     end
 
     def clear_cache_for(key)
@@ -59,6 +55,32 @@ module KB
     end
 
     private
+
+    # Every public method ends up here, so this is the one place a KB call is
+    # observable as a whole: cache lookup, connect, TLS, write, read, parse.
+    def perform(verb, path, payload = nil, cache_key: nil, read_timeout: nil)
+      event = { verb: verb, path: path, base_url: base_url }
+      ActiveSupport::Notifications.instrument(REQUEST_EVENT, event) do
+        if cache_key
+          event[:cache_hit] = true
+          KB::Cache.fetch(cache_key) do
+            event[:cache_hit] = false
+            http(event, payload, read_timeout)
+          end
+        else
+          http(event, payload, read_timeout)
+        end
+      end
+    end
+
+    def http(event, payload, read_timeout)
+      response = connection.public_send(event[:verb], event[:path], payload, &request_options(read_timeout))
+      event[:status] = response.status
+      response.body
+    rescue Faraday::ClientError, Faraday::ServerError => e
+      event[:status] = e.response && e.response[:status]
+      raise
+    end
 
     def headers
       {
