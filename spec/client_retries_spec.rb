@@ -54,6 +54,13 @@ RSpec.describe KB::Client, '#request retries' do
     expect(call(stub) { client.find('k') }).to eq(result: :ok, attempts: 2)
   end
 
+  it 'does not retry a read timeout on a call that set its own read_timeout' do
+    stub = stub_request(:get, 'http://kb.test/v1/pets/birthdays').to_raise(Net::ReadTimeout).then.to_return(json)
+
+    expect(call(stub) { client.request('birthdays', read_timeout: 30) })
+      .to eq(result: Faraday::TimeoutError, attempts: 1)
+  end
+
   it 'does not retry HTTP error responses' do
     stub = stub_request(:get, 'http://kb.test/v1/pets/k').to_return(status: 503, body: '')
 

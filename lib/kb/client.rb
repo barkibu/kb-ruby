@@ -77,7 +77,7 @@ module KB
     def http(event, payload, read_timeout)
       response = connection.public_send(event[:verb], event[:path], payload) do |req|
         req.options.read_timeout = read_timeout if read_timeout
-        RetryPolicy.track(req, event)
+        RetryPolicy.track(req, event, read_timeout)
       end
       event[:status] = response.status
       response.body
