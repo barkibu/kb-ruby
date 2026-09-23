@@ -123,8 +123,10 @@ KB.config.request.idle_timeout = 30 # default, seconds
 Keep `idle_timeout` below the Heroku router's own idle close: it drops an idle
 client connection after about 55 seconds (measured against KB staging, both
 `kb-staging.barkibu.com` and the herokuapp.com host, 2026-09-23). A connection the
-router already closed is detected before reuse and reopened, but staying below
-the router's limit avoids the race.
+router already closed is detected before reuse and reopened. A close that races
+the next request in the same instant is not detectable: a GET is retried on a
+fresh connection, a POST fails as `Faraday::ConnectionFailed` wrapping
+`EOFError`. Staying below the router's limit keeps that race away.
 
 Per-call timeouts (`read_timeout:` on `KB::Client#request`) apply to that call
 only, and error classes are the same as without keep-alive: a connect timeout is

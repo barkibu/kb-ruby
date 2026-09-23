@@ -88,9 +88,12 @@ RSpec.describe KB::PersistentAdapter do
   end
 
   # A POST is not retried after a maybe-sent failure, so this passes only if the
-  # closed connection is detected before the request is written.
+  # closed connection is detected before the request is written. The short sleep
+  # lets the server's FIN arrive, as it long has when the router closes an idle
+  # connection; a close racing the write in the same instant is not detectable.
   it 'detects a connection the server closed without telling the client, before sending on it' do
     client.request('close')
+    sleep 0.2
 
     result = client.create(name: 'Rex')
 
