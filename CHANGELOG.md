@@ -6,7 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [unreleased]
-- See diff: https://github.com/barkibu/kb-ruby/compare/v1.1.0...HEAD
+- See diff: https://github.com/barkibu/kb-ruby/compare/v1.2.0...HEAD
+
+## [1.2.0]
+- `KB::Client` emits one `request.kb_client` `ActiveSupport::Notifications` event per KB call (`KB::Client::REQUEST_EVENT`), wrapping cache lookup, connect, TLS, write, read and parsing. Payload: `verb`, `path`, `base_url`, `cache_hit` (GET only), `status`, plus ActiveSupport's `exception`/`exception_object` when the call raised. Every public method now goes through one private `perform` seam; no behaviour change (same cache keys, params and error classes).
+- Add an opt-in Datadog subscriber: `require 'kb/instrumentation/datadog'` + `KB::Instrumentation::Datadog.subscribe!` turns each event into a `kb.client.request` APM span, opened on event start and closed on finish so the tracer's Net::HTTP spans nest under it. The span inherits the app's service and stays there (no `span.kind:client`/`peer.service`, so it is not attributed to the knowledge-base service), tags `peer.hostname`, `kb.method`, `kb.cache_hit`, `http.status_code`, and uses low-cardinality resources (`GET /v1/pets/?/contracts`). Motivation: connect timeouts happen before `Net::HTTP#request`, so the Datadog Net::HTTP tracer never sees them and they were invisible on our dashboards. Works with `ddtrace` 1.x and `datadog` 2.x; the tracer stays the app's dependency.
 
 ## [1.1.0]
 - Add `read_timeout:` to `KB::Client#request` to raise the read budget for a single call (e.g. `GET /v1/pets/birthdays`, whose server-side work runs for seconds). Connect and write budgets stay global; the override does not leak into later calls on the same connection.

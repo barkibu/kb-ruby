@@ -74,6 +74,49 @@ and write budgets stay global:
 KB::Pet.kb_client.request('birthdays', filters: { month: 9, day: 22, size: 1000 }, read_timeout: 30)
 ```
 
+#### Instrumentation
+
+Every KB call emits one `request.kb_client` event through
+`ActiveSupport::Notifications`, wrapping the whole call: cache lookup, TCP
+connect, TLS, write, read and JSON parsing. The payload carries `verb`, `path`,
+`base_url`, `cache_hit` (GET calls only), `status` (when a response arrived) and
+ActiveSupport's `exception` / `exception_object` when the call raised. Subscribe
+to it for logging, metrics or anything else:
+
+```ruby
+ActiveSupport::Notifications.subscribe(KB::Client::REQUEST_EVENT) do |event|
+  Rails.logger.info("KB #{event.payload[:verb]} #{event.payload[:path]} #{event.duration.round}ms")
+end
+```
+
+##### Datadog
+
+A ready-made subscriber turns each event into a `kb.client.request` APM span.
+Opt in from the app's Datadog initializer, after `Datadog.configure`. Works with
+both `ddtrace` 1.x and `datadog` 2.x; the tracer gem is the app's dependency.
+
+```ruby
+# config/initializers/datadog_tracer.rb
+Datadog.configure { |c| ... }
+
+require 'kb/instrumentation/datadog'
+KB::Instrumentation::Datadog.subscribe!
+```
+
+The span opens when the event starts and closes when it finishes, so the
+tracer's own Net::HTTP spans nest under it. It inherits the app's service
+(`c.service`), so nothing new appears in the APM service list, and it carries no
+`span.kind:client` or `peer.service`, so Datadog does not attribute it to the
+knowledge-base service either: it measures the client's whole call, not a KB
+operation. Resources are low-cardinality (`GET /v1/pets/birthdays`,
+`GET /v1/pets/?/contracts`). Tags: `peer.hostname` (the KB host used),
+`kb.method`, `kb.cache_hit` (GET calls only), `http.status_code`, plus the
+standard `error.type`/`error.message` when the call raises.
+
+Why not rely on the Net::HTTP tracer alone: faraday-net_http opens the socket
+before `Net::HTTP#request`, the method that tracer patches, so a connect timeout
+produces no http span at all. This span sees every phase.
+
 ### Exposed Entities
 
 #### Pet Parent 🧍🏾
