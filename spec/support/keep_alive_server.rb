@@ -4,6 +4,7 @@ require 'socket'
 # that need to see connection reuse. Counts accepted TCP connections.
 #
 #   GET .../stall  reads the request and never answers
+#   GET .../slow   answers after 2s
 #   GET .../close  answers, then closes the connection without saying so
 #   anything else  answers 200 {"ok":true}
 class KeepAliveServer
@@ -42,6 +43,7 @@ class KeepAliveServer
     while (path = read_request(socket))
       return sleep if path.end_with?('/stall')
 
+      sleep 2 if path.end_with?('/slow')
       respond(socket)
       return socket.close if path.end_with?('/close')
     end

@@ -20,13 +20,20 @@ module KB
   #   raw past KB::Error.
   # - Each attempt reports whether it opened a new connection or reused one, into
   #   the request.kb_client event as `connections` (e.g. ["reused", "new"]).
+  #   "reused" means the pool handed out an already-open connection. Net::HTTP may
+  #   still reconnect it silently if it sees the peer closed it; a failure that
+  #   never reached KB (connect timeout, refused) is always reported as "new".
+  #
+  # Differences from faraday-net_http, on purpose: connect_timeout and
+  # idle_timeout are read once per process, when the shared pool is built (call
+  # `reset!` after changing them at runtime), and HTTP(S)_PROXY is not honoured.
   class PersistentAdapter < Faraday::Adapter::NetHttpPersistent
     CURRENT_ATTEMPT = :kb_persistent_attempt
     MUTEX = Mutex.new
 
     class << self
       def http
-        MUTEX.synchronize { @http ||= build_http }
+        @http || MUTEX.synchronize { @http ||= build_http }
       end
 
       # Closes every pooled connection; the next call builds a fresh pool with
@@ -50,12 +57,24 @@ module KB
     end
 
     # One request's view of the connection it was given.
-    Attempt = Struct.new(:options, :connection) do
+    Attempt = Struct.new(:options, :connection, :error) do
       def apply(persistent_connection)
-        http = persistent_connection.http
+        apply_timeouts(persistent_connection.http)
+        self.connection = persistent_connection.requests.zero? ? 'new' : 'reused'
+      end
+
+      def apply_timeouts(http)
+        http.open_timeout = options.open_timeout if options.open_timeout # Net::HTTP's own reconnects
         http.read_timeout = options.read_timeout if options.read_timeout
         http.write_timeout = options.write_timeout if options.write_timeout
-        self.connection = persistent_connection.requests.zero? ? 'new' : 'reused'
+      end
+
+      # A failure before a connection was handed out, or one that never reached
+      # KB, happened while opening a connection.
+      def label
+        return 'new' if connection.nil? || (error && RetryPolicy.not_sent?(error))
+
+        connection
       end
     end
 
@@ -88,7 +107,8 @@ module KB
       attempt = Attempt.new(env[:request])
       Thread.current[CURRENT_ATTEMPT] = attempt
       super
-    rescue Faraday::Error, Net::HTTP::Persistent::Error => e
+    rescue StandardError => e
+      attempt.error = e
       raise normalize(e)
     ensure
       Thread.current[CURRENT_ATTEMPT] = nil
@@ -103,10 +123,9 @@ module KB
       error
     end
 
-    # A failure before a connection was handed out happened while opening one.
     def record(env, attempt)
       event = env[:request].context&.dig(:kb_event)
-      (event[:connections] ||= []) << (attempt.connection || 'new') if event && attempt
+      (event[:connections] ||= []) << attempt.label if event && attempt
     end
   end
 end

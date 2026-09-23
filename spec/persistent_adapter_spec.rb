@@ -58,24 +58,60 @@ RSpec.describe KB::PersistentAdapter do
     expect(accepted: server.accepted, write: events.last[:connections]).to eq(accepted: 1, write: ['reused'])
   end
 
-  it "does not leak one call's read_timeout override into the next call on the same connection" do
-    KB.config.request.read_timeout = 1
-    client.request('a', read_timeout: 30)
+  context "with one call's read_timeout override" do
+    around do |example|
+      KB.config.request.read_timeout = 1
+      KB.config.request.retries = 0
+      example.run
+    ensure
+      KB.config.request.read_timeout = 5
+      KB.config.request.retries = 1
+    end
 
-    seconds = elapsed { client.request('stall') }
+    # The stock adapter writes each call's timeouts onto the shared
+    # Net::HTTP::Persistent, where any thread's next checkout picks them up.
+    it 'never writes it onto the shared Net::HTTP::Persistent' do
+      client.request('a', read_timeout: 30)
 
-    # Two attempts at the 1s global budget (the retry gets a fresh connection),
-    # not 30s: the override stayed with the call that asked for it.
-    expect(within_global_budget: seconds < 5, connections: events.last[:connections])
-      .to eq(within_global_budget: true, connections: %w[reused new])
-  ensure
-    KB.config.request.read_timeout = 5
+      expect(described_class.http.read_timeout).to be_nil
+    end
+
+    it 'keeps it on its own connection while another thread uses the global budget' do
+      slow = Thread.new { client.request('slow', read_timeout: 30) } # 2s answer, over the 1s global
+      sleep 0.3 # let it check its connection out first
+
+      seconds = elapsed { client.request('stall') }
+
+      expect(stalled_within_global_budget: seconds < 2.5, slow_result: slow.value, accepted: server.accepted)
+        .to eq(stalled_within_global_budget: true, slow_result: { 'ok' => true }, accepted: 2)
+    end
   end
 
-  it 'recovers when the server closed an idle connection without telling the client' do
+  # A POST is not retried after a maybe-sent failure, so this passes only if the
+  # closed connection is detected before the request is written.
+  it 'detects a connection the server closed without telling the client, before sending on it' do
     client.request('close')
 
-    expect(result: client.request('a'), accepted: server.accepted).to eq(result: { 'ok' => true }, accepted: 2)
+    result = client.create(name: 'Rex')
+
+    expect(result: result, retries: events.last[:retries], accepted: server.accepted)
+      .to eq(result: { 'ok' => true }, retries: nil, accepted: 2)
+  end
+
+  # The stock configure_ssl sets a cert store per adapter instance (per model
+  # client); every change bumps ssl_generation, which drops all TLS connections.
+  it 'never re-applies SSL settings, whichever client makes the call' do
+    client.request('a')
+    KB::Client.new("http://127.0.0.1:#{server.port}/v1/petparents", api_key: 'test').request('b')
+    client.request('a')
+
+    expect(described_class.http.ssl_generation).to eq 0
+  end
+
+  it 'connects with the configured connect_timeout' do
+    client.request('a')
+
+    expect(described_class.http.open_timeout).to eq KB.config.request.connect_timeout
   end
 
   context 'with a short idle_timeout' do
@@ -101,8 +137,10 @@ RSpec.describe KB::PersistentAdapter do
 
     error = failure { refused.request('a') }
 
-    expect(error: error.class, cause: KB::RetryPolicy.root_cause(error).class, retried: events.last[:retry_errors])
-      .to eq(error: Faraday::ConnectionFailed, cause: Errno::ECONNREFUSED, retried: ['Errno::ECONNREFUSED'])
+    expect(error: error.class, cause: KB::RetryPolicy.root_cause(error).class, retried: events.last[:retry_errors],
+           connections: events.last[:connections])
+      .to eq(error: Faraday::ConnectionFailed, cause: Errno::ECONNREFUSED, retried: ['Errno::ECONNREFUSED'],
+             connections: %w[new new])
   ensure
     KB.config.request.retry_interval = 0.1
   end

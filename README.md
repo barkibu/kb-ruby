@@ -131,6 +131,16 @@ only, and error classes are the same as without keep-alive: a connect timeout is
 `Faraday::ConnectionFailed` wrapping `Net::OpenTimeout`, a refused connection is
 `Faraday::ConnectionFailed` wrapping `Errno::ECONNREFUSED`.
 
+Two differences from `keep_alive = false`: `connect_timeout` and `idle_timeout`
+are read once per process, when the shared pool is built on the first KB call
+(set them in an initializer, or call `KB::PersistentAdapter.reset!` after changing
+them), and `HTTP(S)_PROXY` environment variables are not honoured.
+
+On forking servers (Puma cluster, Sidekiq swarm), connection_pool drops pooled
+connections in the child after fork on Ruby >= 3.1. A preloading parent that
+calls KB before forking shares those sockets with its children; the parent
+recovers by reconnecting on the next call.
+
 #### Instrumentation
 
 Every KB call emits one `request.kb_client` event through
