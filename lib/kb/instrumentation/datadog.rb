@@ -72,8 +72,20 @@ module KB
 
           span.set_tag('kb.cache_hit', payload[:cache_hit].to_s) if payload.key?(:cache_hit)
           span.set_tag('http.status_code', payload[:status].to_s) if payload[:status]
+          tag_retries(span, payload)
           span.set_error(payload[:exception_object]) if payload[:exception_object]
           span.finish
+        end
+
+        private
+
+        # Only on retried calls: `kb.retries` (numeric) and the distinct underlying
+        # errors that triggered them, e.g. `Net::OpenTimeout`.
+        def tag_retries(span, payload)
+          return unless payload[:retries]
+
+          span.set_tag('kb.retries', payload[:retries])
+          span.set_tag('kb.retry_errors', payload[:retry_errors].uniq.join(','))
         end
       end
     end

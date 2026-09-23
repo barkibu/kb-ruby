@@ -189,6 +189,36 @@ RSpec.describe KB::Instrumentation::Datadog do
     end
   end
 
+  describe 'a retried call' do
+    around do |example|
+      KB.config.request.retry_interval = 0
+      example.run
+    ensure
+      KB.config.request.retry_interval = 0.1
+    end
+
+    it 'tags the retry count and the retried error on an otherwise successful span' do
+      ok = { status: 200, body: '{}', headers: { 'Content-Type' => 'application/json' } }
+      stub_request(:get, 'http://kb.test/v1/pets/k').to_raise(Net::OpenTimeout).then.to_return(ok)
+
+      client.find('k')
+
+      expect(
+        status: last_span.status, retries: last_span.get_metric('kb.retries') || last_span.get_tag('kb.retries'),
+        errors: last_span.get_tag('kb.retry_errors')
+      ).to eq(status: 0, retries: 1, errors: 'Net::OpenTimeout')
+    end
+
+    it 'adds no retry tags when the first attempt succeeds' do
+      stub_request(:get, 'http://kb.test/v1/pets/k').to_return(status: 200, body: '{}',
+                                                               headers: { 'Content-Type' => 'application/json' })
+
+      client.find('k')
+
+      expect(last_span.get_tag('kb.retries')).to be_nil
+    end
+  end
+
   # The case that motivated this module: a connect failure never reaches
   # Net::HTTP#request, so the Datadog Net::HTTP tracer never sees it. The
   # notification wraps the connect and the span records it.
@@ -218,9 +248,10 @@ RSpec.describe KB::Instrumentation::Datadog do
 
       expect(
         raised: raised, status: last_span.status, error_type: last_span.get_tag('error.type'),
-        code: last_span.get_tag('http.status_code'), resource: last_span.resource
+        code: last_span.get_tag('http.status_code'), resource: last_span.resource,
+        retried: last_span.get_tag('kb.retry_errors')
       ).to eq(raised: Faraday::ConnectionFailed, status: 1, error_type: 'Faraday::ConnectionFailed',
-              code: nil, resource: 'GET /v1/pets/birthdays')
+              code: nil, resource: 'GET /v1/pets/birthdays', retried: 'Errno::ECONNREFUSED')
     end
   end
 end
