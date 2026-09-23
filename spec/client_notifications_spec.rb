@@ -22,7 +22,7 @@ RSpec.describe KB::Client do
       client.request('birthdays', filters: { month: 9 })
 
       expect(events.last).to eq(verb: :get, path: 'birthdays', base_url: 'http://kb.test/v1/pets',
-                                cache_hit: false, status: 200)
+                                cache_hit: false, status: 200, connections: ['new'])
     end
 
     it 'describes a write without a cache flag' do
@@ -31,7 +31,8 @@ RSpec.describe KB::Client do
 
       client.create(name: 'Rex')
 
-      expect(events.last).to eq(verb: :post, path: '', base_url: 'http://kb.test/v1/pets', status: 201)
+      expect(events.last).to eq(verb: :post, path: '', base_url: 'http://kb.test/v1/pets', status: 201,
+                                connections: ['new'])
     end
 
     it 'keeps the status code and the exception when the API answers an error' do

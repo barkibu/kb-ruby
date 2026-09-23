@@ -99,6 +99,31 @@ Worst case, a call now takes two attempts' worth of phase budgets plus the
 interval, e.g. a GET that read-times-out twice takes about 2 x (1 + 3 + 5)s with
 the default timeouts.
 
+#### Keep-alive connections
+
+KB calls reuse TCP/TLS connections instead of opening a new one per call
+(`KB::PersistentAdapter`, net-http-persistent under faraday-net_http_persistent).
+One pool per process is shared by every model's client, and each thread checks a
+connection out per call. A pooled connection that has been idle longer than
+`idle_timeout` is closed and reopened on the next call.
+
+```ruby
+# config/initializers/kb_ruby.rb
+KB.config.request.keep_alive = true # default; false opens a connection per call (faraday-net_http)
+KB.config.request.idle_timeout = 30 # default, seconds
+```
+
+Keep `idle_timeout` below the Heroku router's own idle close: it drops an idle
+client connection after about 55 seconds (measured against KB staging, both
+`kb-staging.barkibu.com` and the herokuapp.com host, 2026-09-23). A connection the
+router already closed is detected before reuse and reopened, but staying below
+the router's limit avoids the race.
+
+Per-call timeouts (`read_timeout:` on `KB::Client#request`) apply to that call
+only, and error classes are the same as without keep-alive: a connect timeout is
+`Faraday::ConnectionFailed` wrapping `Net::OpenTimeout`, a refused connection is
+`Faraday::ConnectionFailed` wrapping `Errno::ECONNREFUSED`.
+
 #### Instrumentation
 
 Every KB call emits one `request.kb_client` event through
@@ -106,7 +131,10 @@ Every KB call emits one `request.kb_client` event through
 connect, TLS, write, read and JSON parsing. The payload carries `verb`, `path`,
 `base_url`, `cache_hit` (GET calls only), `status` (when a response arrived),
 `retries` and `retry_errors` (only when the call was retried: the count, and the
-underlying error class of each failed attempt, e.g. `["Net::OpenTimeout"]`) and
+underlying error class of each failed attempt, e.g. `["Net::OpenTimeout"]`),
+`connections` (with keep-alive: `"new"` or `"reused"` per attempt, e.g.
+`["reused", "new"]` for a call whose reused connection failed and whose retry
+opened a fresh one) and
 ActiveSupport's `exception` / `exception_object` when the call raised. The event
 covers the whole call including retries, so `exception` is set only when every
 attempt failed. Subscribe to it for logging, metrics or anything else:
@@ -138,8 +166,9 @@ tracer's own Net::HTTP spans nest under it. It inherits the app's service
 knowledge-base service either: it measures the client's whole call, not a KB
 operation. Resources are low-cardinality (`GET /v1/pets/birthdays`,
 `GET /v1/pets/?/contracts`). Tags: `peer.hostname` (the KB host used),
-`kb.method`, `kb.cache_hit` (GET calls only), `http.status_code`, `kb.retries`
-and `kb.retry_errors` (retried calls only), plus the standard
+`kb.method`, `kb.cache_hit` (GET calls only), `http.status_code`,
+`kb.connections` (e.g. `reused` or `reused,new`), `kb.retries` and
+`kb.retry_errors` (retried calls only), plus the standard
 `error.type`/`error.message` when the call raises. A span with `kb.retries` and
 no error is a failure the retry absorbed.
 

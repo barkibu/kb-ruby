@@ -10,8 +10,21 @@ RSpec.describe KB::Client do
     Faraday::Adapter::NetHttp.new(nil).build_connection(env)
   end
 
-  it 'uses the net_http adapter' do
-    expect(connection.adapter).to eq Faraday::Adapter::NetHttp
+  it 'uses the keep-alive adapter by default' do
+    expect(connection.adapter).to eq KB::PersistentAdapter
+  end
+
+  context 'with keep_alive disabled' do
+    around do |example|
+      KB.config.request.keep_alive = false
+      example.run
+    ensure
+      KB.config.request.keep_alive = true
+    end
+
+    it 'falls back to the net_http adapter' do
+      expect(connection.adapter).to eq Faraday::Adapter::NetHttp
+    end
   end
 
   it 'sets all three phase timeouts on the Net::HTTP connection' do

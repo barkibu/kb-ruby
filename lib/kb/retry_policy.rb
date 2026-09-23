@@ -24,6 +24,7 @@ module KB
       Errno::EHOSTUNREACH,
       Errno::ENETUNREACH,
       Errno::EADDRNOTAVAIL,
+      Errno::EHOSTDOWN,
       SocketError # DNS resolution
     ].freeze
     TRANSPORT_ERRORS = [Faraday::ConnectionFailed, Faraday::TimeoutError, Faraday::SSLError].freeze

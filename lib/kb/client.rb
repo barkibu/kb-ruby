@@ -3,6 +3,7 @@ module KB
     # Emitted once per KB call, wrapping cache lookup and the HTTP request.
     # Payload: verb, path, base_url, cache_hit (GET only), status (when a response arrived),
     # retries / retry_errors (only when the call was retried, see KB::RetryPolicy),
+    # connections ("new" / "reused" per attempt, keep-alive transport only),
     # plus ActiveSupport's exception/exception_object when the call raised.
     REQUEST_EVENT = 'request.kb_client'.freeze
 
@@ -113,7 +114,7 @@ module KB
             logger.filter(/(X-api-key:\s)("\w+")/, '\1[API_KEY_SCRUBBED]')
           end
         end
-        conn.adapter :net_http
+        conn.adapter(KB.config.request.keep_alive ? KB::PersistentAdapter : :net_http)
       end
     end
 

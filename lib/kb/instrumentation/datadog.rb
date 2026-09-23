@@ -72,16 +72,18 @@ module KB
 
           span.set_tag('kb.cache_hit', payload[:cache_hit].to_s) if payload.key?(:cache_hit)
           span.set_tag('http.status_code', payload[:status].to_s) if payload[:status]
-          tag_retries(span, payload)
+          tag_transport(span, payload)
           span.set_error(payload[:exception_object]) if payload[:exception_object]
           span.finish
         end
 
         private
 
+        # `kb.connections`: "new"/"reused" per attempt (keep-alive transport).
         # Only on retried calls: `kb.retries` (numeric) and the distinct underlying
         # errors that triggered them, e.g. `Net::OpenTimeout`.
-        def tag_retries(span, payload)
+        def tag_transport(span, payload)
+          span.set_tag('kb.connections', payload[:connections].join(',')) if payload[:connections]
           return unless payload[:retries]
 
           span.set_tag('kb.retries', payload[:retries])
