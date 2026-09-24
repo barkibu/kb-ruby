@@ -50,7 +50,8 @@ module KB
     # The Ruby error behind a Faraday error. `wrapped_exception` is Faraday's own
     # explicit link to it (Ruby's `cause` is only whatever was being rescued at
     # the raise, usually the same object). Faraday's adapters wrap the Ruby error
-    # one level deep, so one level is enough.
+    # one level deep, so one level is enough; KB::PersistentAdapter#normalize
+    # flattens the stock persistent adapter's deeper nesting to keep it that way.
     def root_cause(error)
       (error.respond_to?(:wrapped_exception) && error.wrapped_exception) || error.cause || error
     end

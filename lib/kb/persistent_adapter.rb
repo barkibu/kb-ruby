@@ -115,6 +115,14 @@ module KB
       record(env, attempt)
     end
 
+    # Gives the Faraday errors faraday-net_http gives for the same failure. The
+    # stock adapter's perform_request rescues first and differs in two ways:
+    # - Net::OpenTimeout becomes TimeoutError; faraday-net_http says ConnectionFailed.
+    # - "connection refused" / "host down" arrive as Net::HTTP::Persistent::Error,
+    #   with the real Errno as its `cause`. The stock adapter wraps it (refused)
+    #   or re-raises it raw (host down, not a Faraday error at all). Here it
+    #   becomes ConnectionFailed wrapping the Errno, so RetryPolicy.root_cause
+    #   finds it one level down.
     def normalize(error)
       cause = error.is_a?(Faraday::Error) ? error.wrapped_exception : error
       return Faraday::ConnectionFailed.new(cause) if cause.is_a?(Net::OpenTimeout)
