@@ -75,10 +75,7 @@ module KB
     end
 
     def http(event, payload, read_timeout)
-      response = connection.public_send(event[:verb], event[:path], payload) do |req|
-        req.options.read_timeout = read_timeout if read_timeout
-        RetryPolicy.track(req, event, read_timeout)
-      end
+      response = send_request(event, payload, read_timeout)
       event[:status] = response.status
       response.body
     rescue Faraday::ClientError, Faraday::ServerError => e
@@ -86,11 +83,12 @@ module KB
       raise
     end
 
-    def headers
-      {
-        'Content-Type': 'application/json',
-        'x-api-key': api_key
-      }
+    def send_request(event, payload, read_timeout)
+      connection(read_timeout).public_send(event[:verb], url_for(event[:path]), payload) do |req|
+        req.headers[:'x-api-key'] = api_key # a symbol, so Faraday names it X-api-key, as the log filter expects
+        req.options.read_timeout = read_timeout if read_timeout
+        RetryPolicy.track(req, event, read_timeout)
+      end
     end
 
     def attributes_case_transform(attributes)
@@ -103,26 +101,18 @@ module KB
       attributes_case_transform(attributes).to_json
     end
 
-    def connection
-      @connection ||= Faraday.new(url: base_url, headers: headers, request: request_timeouts) do |conn|
-        conn.request :retry, RetryPolicy.middleware_options
-        conn.response :json
-        conn.response :raise_error
-        if KB.config.log_level == :debugger
-          conn.response :logger do |logger|
-            logger.filter(/(X-api-key:\s)("\w+")/, '\1[API_KEY_SCRUBBED]')
-          end
-        end
-        conn.adapter :net_http
-      end
+    # The process-wide connection every client shares (see KB::Connections):
+    # keep-alive unless disabled, or unless this one call sets its own read_timeout.
+    def connection(read_timeout = nil)
+      Connections.fetch(keep_alive: KB.config.request.keep_alive && read_timeout.nil?)
     end
 
-    def request_timeouts
-      {
-        open_timeout: KB.config.request.connect_timeout,
-        write_timeout: KB.config.request.write_timeout,
-        read_timeout: KB.config.request.read_timeout
-      }
+    # The URL a Faraday connection on base_url would build for `path`, by Faraday's
+    # own joining rules ("" is base_url itself, anything else is relative to
+    # base_url + "/"), so sharing one connection across clients changes no URL.
+    def url_for(path)
+      @url_builder ||= Faraday::Connection.new(url: base_url)
+      @url_builder.build_exclusive_url(path).to_s
     end
   end
 end

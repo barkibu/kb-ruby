@@ -24,6 +24,12 @@ module KB
     # Retries after a transport failure, per KB::RetryPolicy. 0 disables retries.
     setting :retries, default: 1
     setting :retry_interval, default: 0.1
+    # Reuse connections to KB across calls (faraday-net_http_persistent, one pool
+    # per process, see KB::Connections). false opens a connection per call.
+    setting :keep_alive, default: true
+    # Seconds a pooled connection may sit idle before it is closed and reopened.
+    # Keep it below the Heroku router's idle close (about 55s, see README).
+    setting :idle_timeout, default: 30
   end
 end
 
@@ -33,6 +39,7 @@ require 'kb/cache'
 require 'kb/client_resolver'
 require 'kb/errors'
 require 'kb/retry_policy'
+require 'kb/connections'
 require 'kb/client'
 
 require 'kb/concerns'

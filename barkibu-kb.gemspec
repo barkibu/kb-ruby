@@ -53,7 +53,9 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'activesupport', '>= 3.0.0'
   spec.add_runtime_dependency 'faraday'
   spec.add_runtime_dependency 'faraday-net_http', '~> 1.0'
+  spec.add_runtime_dependency 'faraday-net_http_persistent', '~> 1.2'
   spec.add_runtime_dependency 'faraday_middleware'
   spec.add_runtime_dependency 'faraday-retry', '~> 1.0'
   spec.add_runtime_dependency 'i18n'
+  spec.add_runtime_dependency 'net-http-persistent', '~> 4.0'
 end

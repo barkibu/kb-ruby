@@ -40,4 +40,8 @@ RSpec.configure do |config|
   config.mock_with :rspec do |mocks|
     mocks.verify_partial_doubles = true
   end
+
+  # Connections are shared per process and built from KB.config on first use, so
+  # each example starts without them and sees its own config.
+  config.before { KB::Connections.reset! }
 end

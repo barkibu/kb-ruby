@@ -6,7 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [unreleased]
-- See diff: https://github.com/barkibu/kb-ruby/compare/v1.3.0...HEAD
+- See diff: https://github.com/barkibu/kb-ruby/compare/v1.4.0...HEAD
+
+## [1.4.0]
+- Reuse connections to KB (keep-alive) with the stock faraday-net_http_persistent adapter. New runtime dependencies: `faraday-net_http_persistent ~> 1.2`, `net-http-persistent ~> 4.0` (4.0.8 accepts `connection_pool` 2.2.4 up to < 4). On by default; `KB.config.request.keep_alive = false` restores one connection per call. New `KB.config.request.idle_timeout` (default 30s, below the Heroku router's ~55s idle close).
+- Every `KB::Client` now shares one Faraday connection (`KB::Connections`), so all model clients use one connection pool per process. Clients send full URLs and their own `x-api-key` header per request; URLs, headers and cache keys are unchanged. Settings are read when that connection is built, on the process's first KB call; `KB::Connections.reset!` applies later changes.
+- A call with its own `read_timeout:` goes through a separate plain net_http connection, so its override never reaches the shared pool's other calls.
+- With keep-alive, a connect timeout is `Faraday::TimeoutError` (was `Faraday::ConnectionFailed`) wrapping `Net::OpenTimeout`, and a refused connection is `Faraday::ConnectionFailed` wrapping `Net::HTTP::Persistent::Error`. Both still become `KB::Error` in model calls and are still retried for every verb: `KB::RetryPolicy.root_cause` unwraps `Net::HTTP::Persistent::Error` to the underlying `Errno`. Datadog `error.type` on connect-timeout spans changes accordingly.
 
 ## [1.3.0]
 - Retry transport failures once (`faraday-retry`, already in the Faraday 1.10 bundle, now an explicit dependency). `KB::RetryPolicy` decides by the underlying error, not the Faraday class: failures where the request never left (`Net::OpenTimeout`, `ECONNREFUSED`, `EHOSTUNREACH`, `ENETUNREACH`, `EADDRNOTAVAIL`, `SocketError`) retry for every verb; any other transport failure (read/write timeout, reset, EOF, TLS) retries for GET/HEAD only (and not when the call raised its own `read_timeout:`, so a 30s read isn't doubled); HTTP error responses never retry. New settings `KB.config.request.retries` (default 1, 0 disables) and `retry_interval` (default 0.1s, randomized up to 2x). Worst-case latency is now two attempts' worth of phase budgets.
