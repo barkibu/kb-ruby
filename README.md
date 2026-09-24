@@ -99,12 +99,47 @@ KB.config.request.retries = 1          # default; 0 disables retries
 KB.config.request.retry_interval = 0.1 # default, seconds; each wait is 1x-2x this
 ```
 
-Like the timeouts, these are read when a client builds its connection, i.e. on
-its first call, so set them in an initializer.
+Like the timeouts, these are read when the process's shared KB connection is
+built, i.e. on its first KB call, so set them in an initializer (or call
+`KB::Connections.reset!` after changing them at runtime).
 
 Worst case, a call now takes two attempts' worth of phase budgets plus the
 interval, e.g. a GET that read-times-out twice takes about 2 x (1 + 3 + 5)s with
 the default timeouts.
+
+#### Keep-alive connections
+
+KB calls reuse TCP/TLS connections instead of opening a new one per call, through
+the stock `net_http_persistent` Faraday adapter (net-http-persistent). Every
+model's client shares one Faraday connection per KB host and API key
+(`KB::Connections`), so they all draw on one connection pool per process; each
+thread checks a connection out per call. A pooled connection idle for longer
+than `idle_timeout` is closed and reopened on the next call.
+
+```ruby
+# config/initializers/kb_ruby.rb
+KB.config.request.keep_alive = true # default; false opens a connection per call (net_http)
+KB.config.request.idle_timeout = 30 # default, seconds
+```
+
+Keep `idle_timeout` below the Heroku router's own idle close: it drops an idle
+client connection after about 55 seconds (measured against KB staging,
+2026-09-23). A connection the server already closed is noticed before the next
+request is written, and reopened. A close that races the request in the same
+instant can't be noticed: a GET is retried on a fresh connection (see Retries),
+a POST fails with `Faraday::ConnectionFailed` wrapping `EOFError`.
+
+Net::HTTP's own retry of idempotent requests stays off (`max_retries = 0`), so a
+PUT is never resent behind `KB::RetryPolicy`'s back.
+
+A call with its own `read_timeout:` goes through a separate plain connection,
+opened for that call: the pooled adapter keeps one timeout setting for the whole
+pool, where one call's override would reach other threads' calls.
+
+Differences from `keep_alive = false`: a connect timeout surfaces as
+`Faraday::TimeoutError` wrapping `Net::OpenTimeout` (retries classify it by that
+underlying error, so it is still retried for every verb), and a refused
+connection as `Faraday::ConnectionFailed` wrapping `Net::HTTP::Persistent::Error`.
 
 #### Instrumentation
 

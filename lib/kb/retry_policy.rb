@@ -1,5 +1,6 @@
 require 'socket'
 require 'net/http'
+require 'net/http/persistent'
 require 'faraday/retry'
 
 module KB
@@ -49,9 +50,12 @@ module KB
     # The Ruby error behind a Faraday error. `wrapped_exception` is Faraday's own
     # explicit link to it (Ruby's `cause` is only whatever was being rescued at
     # the raise, usually the same object). Faraday's adapters wrap the Ruby error
-    # one level deep, so one level is enough.
+    # one level deep, so one level is enough, except that net-http-persistent
+    # re-raises a refused connection as its own Net::HTTP::Persistent::Error with
+    # the Errno as its `cause`.
     def root_cause(error)
-      (error.respond_to?(:wrapped_exception) && error.wrapped_exception) || error.cause || error
+      cause = (error.respond_to?(:wrapped_exception) && error.wrapped_exception) || error.cause || error
+      cause.is_a?(Net::HTTP::Persistent::Error) && cause.cause ? cause.cause : cause
     end
 
     # Options for faraday-retry's middleware, read from KB.config.request.

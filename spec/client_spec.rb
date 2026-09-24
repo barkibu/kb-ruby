@@ -15,8 +15,8 @@ RSpec.describe KB::Client do
   end
 
   before do
-    connection = client.send('connection')
-    connection.builder.adapter :test, stubs
+    # Both shared connections: keep-alive, and plain net_http for calls with their own read_timeout.
+    [client.send(:connection), client.send(:connection, 30)].each { |c| c.builder.adapter :test, stubs }
   end
 
   after do

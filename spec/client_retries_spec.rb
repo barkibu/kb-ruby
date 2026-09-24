@@ -73,14 +73,14 @@ RSpec.describe KB::Client, '#request retries' do
     outcome = call(stub) { client.find('k') }
 
     expect(outcome.merge(retries: events.last[:retries], recorded: events.last[:exception_object].class))
-      .to eq(result: Faraday::ConnectionFailed, attempts: 2, retries: 1, recorded: Faraday::ConnectionFailed)
+      .to eq(result: Faraday::TimeoutError, attempts: 2, retries: 1, recorded: Faraday::TimeoutError)
   end
 
   it 'does not retry when retries are set to 0' do
     KB.config.request.retries = 0
     stub = stub_request(:get, 'http://kb.test/v1/pets/k').to_raise(Net::OpenTimeout).then.to_return(json)
 
-    expect(call(stub) { client.find('k') }).to eq(result: Faraday::ConnectionFailed, attempts: 1)
+    expect(call(stub) { client.find('k') }).to eq(result: Faraday::TimeoutError, attempts: 1)
   end
 
   it 'leaves the event untouched when the first attempt succeeds' do
