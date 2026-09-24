@@ -47,6 +47,10 @@ module KB
       NOT_SENT_ERRORS.any? { |klass| cause.is_a?(klass) }
     end
 
+    # The Ruby error behind a Faraday error. `wrapped_exception` is Faraday's own
+    # explicit link to it (Ruby's `cause` is only whatever was being rescued at
+    # the raise, usually the same object). Faraday's adapters wrap the Ruby error
+    # one level deep, so one level is enough.
     def root_cause(error)
       (error.respond_to?(:wrapped_exception) && error.wrapped_exception) || error.cause || error
     end
