@@ -21,10 +21,21 @@ RSpec.describe KB::Client do
     expect(client.send(:connection, 30).adapter).to eq Faraday::Adapter::NetHttp
   end
 
-  it 'shares one connection between clients of the same KB origin' do
+  it 'shares one connection between clients' do
     other = described_class.new('http://kb.example/v1/other').send(:connection)
 
     expect(other).to be connection
+  end
+
+  it 'sends each client its own API key over the shared connection' do
+    ok = { status: 200, body: '{}', headers: { 'Content-Type' => 'application/json' } }
+    one = stub_request(:get, 'http://kb.example/v1/a/x').with(headers: { 'X-Api-Key' => 'one' }).to_return(ok)
+    two = stub_request(:get, 'http://kb.example/v1/b/x').with(headers: { 'X-Api-Key' => 'two' }).to_return(ok)
+
+    described_class.new('http://kb.example/v1/a', api_key: 'one').request('x')
+    described_class.new('http://kb.example/v1/b', api_key: 'two').request('x')
+
+    expect([one, two]).to all(have_been_requested)
   end
 
   context 'with keep_alive disabled' do

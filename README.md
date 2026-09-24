@@ -111,8 +111,8 @@ the default timeouts.
 
 KB calls reuse TCP/TLS connections instead of opening a new one per call, through
 the stock `net_http_persistent` Faraday adapter (net-http-persistent). Every
-model's client shares one Faraday connection per KB host and API key
-(`KB::Connections`), so they all draw on one connection pool per process; each
+model's client shares one Faraday connection (`KB::Connections`), so they all
+draw on one connection pool per process; each
 thread checks a connection out per call. A pooled connection idle for longer
 than `idle_timeout` is closed and reopened on the next call.
 

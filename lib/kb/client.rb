@@ -85,6 +85,7 @@ module KB
 
     def send_request(event, payload, read_timeout)
       connection(read_timeout).public_send(event[:verb], url_for(event[:path]), payload) do |req|
+        req.headers[:'x-api-key'] = api_key # a symbol, so Faraday names it X-api-key, as the log filter expects
         req.options.read_timeout = read_timeout if read_timeout
         RetryPolicy.track(req, event, read_timeout)
       end
@@ -100,14 +101,10 @@ module KB
       attributes_case_transform(attributes).to_json
     end
 
-    # The process-wide connection for this client's KB origin (see KB::Connections):
+    # The process-wide connection every client shares (see KB::Connections):
     # keep-alive unless disabled, or unless this one call sets its own read_timeout.
     def connection(read_timeout = nil)
-      Connections.fetch(origin, api_key, keep_alive: KB.config.request.keep_alive && read_timeout.nil?)
-    end
-
-    def origin
-      @origin ||= URI(base_url).then { |uri| "#{uri.scheme}://#{uri.host}:#{uri.port}" }
+      Connections.fetch(keep_alive: KB.config.request.keep_alive && read_timeout.nil?)
     end
 
     # The URL a Faraday connection on base_url would build for `path`, by Faraday's
