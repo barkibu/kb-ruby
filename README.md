@@ -74,14 +74,49 @@ and write budgets stay global:
 KB::Pet.kb_client.request('birthdays', filters: { month: 9, day: 22, size: 1000 }, read_timeout: 30)
 ```
 
+#### Retries
+
+The client retries a failed call once when the failure is in the transport, never
+when KB answered with an HTTP error. Which calls retry depends on whether the
+request can have reached KB (`KB::RetryPolicy`):
+
+| Failure | Retried for |
+|---|---|
+| Never sent: connect/TLS timeout (`Net::OpenTimeout`), connection refused, host/network unreachable, DNS failure | every verb, POST included |
+| Maybe sent: read/write timeout, connection reset, EOF, TLS error mid-stream | GET and HEAD only |
+| HTTP 4xx/5xx | never |
+
+PUT and DELETE are not retried on "maybe sent" failures: `upsert` and
+`PetParent#merge!` are PUTs whose second run is not a no-op on KB's side, and a
+repeated DELETE would turn a success into a 404. A call that raised its own read
+budget (`read_timeout:` on `KB::Client#request`) is not retried on "maybe sent"
+failures either, so a 30s birthdays read can't become 60s; failures that never
+reached KB are still retried.
+
+```ruby
+# config/initializers/kb_ruby.rb
+KB.config.request.retries = 1          # default; 0 disables retries
+KB.config.request.retry_interval = 0.1 # default, seconds; each wait is 1x-2x this
+```
+
+Like the timeouts, these are read when a client builds its connection, i.e. on
+its first call, so set them in an initializer.
+
+Worst case, a call now takes two attempts' worth of phase budgets plus the
+interval, e.g. a GET that read-times-out twice takes about 2 x (1 + 3 + 5)s with
+the default timeouts.
+
 #### Instrumentation
 
 Every KB call emits one `request.kb_client` event through
 `ActiveSupport::Notifications`, wrapping the whole call: cache lookup, TCP
 connect, TLS, write, read and JSON parsing. The payload carries `verb`, `path`,
-`base_url`, `cache_hit` (GET calls only), `status` (when a response arrived) and
-ActiveSupport's `exception` / `exception_object` when the call raised. Subscribe
-to it for logging, metrics or anything else:
+`base_url`, `cache_hit` (GET calls only), `status` (when a response arrived),
+`retries` and `retry_errors` (only when the call was retried: the count, and the
+underlying error class of each failed attempt, e.g. `["Net::OpenTimeout"]`) and
+ActiveSupport's `exception` / `exception_object` when the call raised. The event
+covers the whole call including retries, so `exception` is set only when every
+attempt failed. Subscribe to it for logging, metrics or anything else:
 
 ```ruby
 ActiveSupport::Notifications.subscribe(KB::Client::REQUEST_EVENT) do |event|
@@ -110,8 +145,10 @@ tracer's own Net::HTTP spans nest under it. It inherits the app's service
 knowledge-base service either: it measures the client's whole call, not a KB
 operation. Resources are low-cardinality (`GET /v1/pets/birthdays`,
 `GET /v1/pets/?/contracts`). Tags: `peer.hostname` (the KB host used),
-`kb.method`, `kb.cache_hit` (GET calls only), `http.status_code`, plus the
-standard `error.type`/`error.message` when the call raises.
+`kb.method`, `kb.cache_hit` (GET calls only), `http.status_code`, `kb.retries`
+and `kb.retry_errors` (retried calls only), plus the standard
+`error.type`/`error.message` when the call raises. A span with `kb.retries` and
+no error is a failure the retry absorbed.
 
 Why not rely on the Net::HTTP tracer alone: faraday-net_http opens the socket
 before `Net::HTTP#request`, the method that tracer patches, so a connect timeout

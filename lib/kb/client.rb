@@ -2,6 +2,7 @@ module KB
   class Client
     # Emitted once per KB call, wrapping cache lookup and the HTTP request.
     # Payload: verb, path, base_url, cache_hit (GET only), status (when a response arrived),
+    # retries / retry_errors (only when the call was retried, see KB::RetryPolicy),
     # plus ActiveSupport's exception/exception_object when the call raised.
     REQUEST_EVENT = 'request.kb_client'.freeze
 
@@ -74,7 +75,10 @@ module KB
     end
 
     def http(event, payload, read_timeout)
-      response = connection.public_send(event[:verb], event[:path], payload, &request_options(read_timeout))
+      response = connection.public_send(event[:verb], event[:path], payload) do |req|
+        req.options.read_timeout = read_timeout if read_timeout
+        RetryPolicy.track(req, event, read_timeout)
+      end
       event[:status] = response.status
       response.body
     rescue Faraday::ClientError, Faraday::ServerError => e
@@ -101,6 +105,7 @@ module KB
 
     def connection
       @connection ||= Faraday.new(url: base_url, headers: headers, request: request_timeouts) do |conn|
+        conn.request :retry, RetryPolicy.middleware_options
         conn.response :json
         conn.response :raise_error
         if KB.config.log_level == :debugger
@@ -110,12 +115,6 @@ module KB
         end
         conn.adapter :net_http
       end
-    end
-
-    def request_options(read_timeout)
-      return nil if read_timeout.nil?
-
-      ->(req) { req.options.read_timeout = read_timeout }
     end
 
     def request_timeouts

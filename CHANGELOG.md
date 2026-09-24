@@ -6,7 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [unreleased]
-- See diff: https://github.com/barkibu/kb-ruby/compare/v1.2.0...HEAD
+- See diff: https://github.com/barkibu/kb-ruby/compare/v1.3.0...HEAD
+
+## [1.3.0]
+- Retry transport failures once (`faraday-retry`, already in the Faraday 1.10 bundle, now an explicit dependency). `KB::RetryPolicy` decides by the underlying error, not the Faraday class: failures where the request never left (`Net::OpenTimeout`, `ECONNREFUSED`, `EHOSTUNREACH`, `ENETUNREACH`, `EADDRNOTAVAIL`, `SocketError`) retry for every verb; any other transport failure (read/write timeout, reset, EOF, TLS) retries for GET/HEAD only (and not when the call raised its own `read_timeout:`, so a 30s read isn't doubled); HTTP error responses never retry. New settings `KB.config.request.retries` (default 1, 0 disables) and `retry_interval` (default 0.1s, randomized up to 2x). Worst-case latency is now two attempts' worth of phase budgets.
+- `request.kb_client` payload gains `retries` and `retry_errors` on retried calls; the Datadog subscriber tags them as `kb.retries` / `kb.retry_errors`. The event and span cover all attempts, so a call that succeeded on retry is not an error.
+- `KB::Listable.all` (and so `PetParent.all`, `Pet.all`, `Breed.all`, `Product.all`, `Plan.all`, `Assessment.all`) now wraps `Faraday::ConnectionFailed` in `KB::Error` like every other model call, instead of re-raising it raw. Code rescuing `Faraday::ConnectionFailed` around `.all` must rescue `KB::Error` instead; none of Funnel, Global Admin or connected_health does.
 
 ## [1.2.0]
 - `KB::Client` emits one `request.kb_client` `ActiveSupport::Notifications` event per KB call (`KB::Client::REQUEST_EVENT`), wrapping cache lookup, connect, TLS, write, read and parsing. Payload: `verb`, `path`, `base_url`, `cache_hit` (GET only), `status`, plus ActiveSupport's `exception`/`exception_object` when the call raised. Every public method now goes through one private `perform` seam; no behaviour change (same cache keys, params and error classes).

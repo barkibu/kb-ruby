@@ -21,6 +21,9 @@ module KB
     setting :connect_timeout, default: 1
     setting :write_timeout, default: 3
     setting :read_timeout, default: 5
+    # Retries after a transport failure, per KB::RetryPolicy. 0 disables retries.
+    setting :retries, default: 1
+    setting :retry_interval, default: 0.1
   end
 end
 
@@ -29,6 +32,7 @@ require 'kb/inflections'
 require 'kb/cache'
 require 'kb/client_resolver'
 require 'kb/errors'
+require 'kb/retry_policy'
 require 'kb/client'
 
 require 'kb/concerns'

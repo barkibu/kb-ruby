@@ -48,4 +48,14 @@ RSpec.describe KB::Listable do
       expect { list }.to raise_exception api_exception
     end
   end
+
+  context 'when the connection to KB fails' do
+    before do
+      allow(kb_client).to receive(:all).and_raise(Faraday::ConnectionFailed.new(Net::OpenTimeout.new))
+    end
+
+    it 'wraps it in KB::Error like every other Faraday error' do
+      expect { list }.to raise_exception(KB::Error)
+    end
+  end
 end

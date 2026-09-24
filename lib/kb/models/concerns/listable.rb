@@ -11,8 +11,6 @@ module KB
         kb_client.all(filters).map do |pet_parent|
           from_api pet_parent
         end
-      rescue Faraday::ConnectionFailed => e
-        raise e
       rescue Faraday::Error => e
         raise KB::Error.from_faraday(e)
       end
